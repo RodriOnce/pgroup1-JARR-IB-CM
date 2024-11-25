@@ -1,31 +1,107 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Página de Inicio - Verificador de Archivos</title>
-    <link rel="stylesheet" href="css_index.css">
+    <link rel="stylesheet" href="css/css_index.css">
+    <style>
+        body {
+            background-color: #ebebeb; /* Cambiado al color de fondo de la imagen proporcionada */
+        }
+        .hero-logo {
+            width: 500px; /* Hacer el logo del medio más grande */
+            height: auto;
+            margin-bottom: 20px; /* Ajustar espacio inferior */
+        }
+        .hero h1 {
+            margin-top: 10px; /* Subir el título 'Verificador de Archivos Seguro' */
+        }
+    </style>
 </head>
 <body>
     <header>
+        <div class="logo">
+            <a href="index.html"><img src="images/malwarecheck_logo_only.png" alt="Logo MalwareCheck"></a>
+        </div>
         <nav>
-            <ul>
-                <li><a href="index.html">Inicio</a></li>
-                <li><a href="registro.html">Crear Cuenta</a></li>
+            <ul class="nav-links">
                 <li><a href="login.html">Iniciar Sesión</a></li>
+                <li><a href="registro.html" class="cta-button">Crear Cuenta</a></li>
             </ul>
         </nav>
     </header>
     <main>
         <section class="hero">
-            <h1>Bienvenido al Verificador de Archivos Seguro</h1>
-            <p>Sube y verifica tus archivos con seguridad y rapidez.</p>
-            <a href="registro.html" class="cta-button">Empezar Ahora</a>
+            <img src="images/malwarecheck_logo_entero.png" alt="Logo Completo MalwareCheck" class="hero-logo">
+            <h1>Verificador de Archivos Seguro</h1>
+            <p>Analiza archivos, URLs, IPs y dominios para detectar posibles amenazas. Protégete de software malicioso con nuestra tecnología avanzada.</p>
         </section>
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'file')">Archivo</button>
+            <button class="tab-button" onclick="openTab(event, 'url')">URL</button>
+            <button class="tab-button" onclick="openTab(event, 'search')">Búsqueda</button>
+        </div>
+        <div id="file" class="tab-content">
+            <form action="/subir_archivo" method="post" enctype="multipart/form-data">
+                <div class="file-upload">
+                    <label for="archivo"><img src="images/upload_icon.png" alt="Subir Archivo"></label>
+                    <input type="file" id="archivo" name="archivo" required>
+                </div>
+                <button type="submit" class="cta-button-file">Subir Archivo y Verificar</button>
+            </form>
+        </div>
+        <div id="url" class="tab-content" style="display:none;">
+            <form action="/verificar_url" method="post">
+                <input type="url" id="url_input" name="url_input" placeholder="Ingresa una URL para verificar" required>
+                <button type="submit" class="cta-button-file">Verificar URL</button>
+            </form>
+        </div>
+        <div id="search" class="tab-content" style="display:none;">
+            <form action="/buscar" method="get">
+                <input type="text" id="search_input" name="search_input" placeholder="Buscar IP, dominio o hash" required>
+                <button type="submit" class="cta-button-file">Buscar</button>
+            </form>
+        </div>
     </main>
     <footer>
+        <div class="footer-content">
+            <div class="footer-links">
+                <h4>Our Product</h4>
+                <ul>
+                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="support.html">Get Support</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Community</h4>
+                <ul>
+                    <li><a href="community.html">Join Community</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Documentation</h4>
+                <ul>
+                    <li><a href="api.html">API</a></li>
+                </ul>
+            </div>
+        </div>
         <p>&copy; 2024 Verificador de Archivos. Todos los derechos reservados.</p>
     </footer>
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
 </body>
 </html>
