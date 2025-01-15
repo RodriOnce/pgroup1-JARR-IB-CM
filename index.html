@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificador de Archivos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f3f8;
+            color: #333;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        header {
+            background-color: #a084ca;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            color: white;
+        }
+
+        header .logo {
+            height: 80px;
+        }
+
+        header .user-icon {
+            position: absolute;
+            right: 20px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .tabs div {
+            margin: 0 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tabs div.active {
+            border-bottom: 2px solid black;
+        }
+
+        .icon {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .icon img {
+            width: 100px;
+            height: auto;
+        }
+
+        .icon.active {
+            display: block;
+        }
+
+        footer {
+            font-size: 0.8rem;
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .sphere {
+            position: absolute;
+            top: 0;
+            right: -10%;
+            width: 60%;
+            height: auto;
+            transform: translateX(50%);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <img class="logo" src="https://static.vecteezy.com/system/resources/thumbnails/016/461/694/small/angel-wings-and-halo-png.png" alt="Logo">
+    <div class="user-icon" onclick="window.location.href='login.html';">👤</div>
+</header>
+
+<div class="container">
+    <h1>Verificador de Archivos</h1>
+
+    <div class="tabs">
+        <div id="tab-archivo" class="tab active">Archivo</div>
+        <div id="tab-url" class="tab">URL</div>
+        <div id="tab-busqueda" class="tab">Búsqueda</div>
+    </div>
+
+    <div id="icon-archivo" class="icon active">
+        <img src="https://cdn-icons-png.flaticon.com/512/304/304579.png" alt="Archivo">
+    </div>
+
+    <div id="icon-url" class="icon">
+        <img src="https://e7.pngegg.com/pngimages/631/179/png-clipart-computer-icons-computer-mouse-hyperlink-url-electronics-text.png" alt="URL">
+    </div>
+
+    <div id="icon-busqueda" class="icon">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTv5S8_qIUJFz6VFHIFGk1PsckuRglbnFSjw&s" alt="Búsqueda">
+    </div>
+</div>
+
+<footer>
+    Al enviar sus datos, acepta nuestras <a href="#">Condiciones de servicio</a> y nuestro <a href="#">Aviso de privacidad</a>. Por favor, no envíe ninguna información personal.
+</footer>
+
+<img class="sphere" src="https://geodomos.es/wp-content/uploads/2024/06/oficial.png" alt="Esfera">
+
+<script>
+    const tabs = document.querySelectorAll('.tab');
+    const icons = document.querySelectorAll('.icon');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active class from all tabs and icons
+            tabs.forEach(t => t.classList.remove('active'));
+            icons.forEach(icon => icon.classList.remove('active'));
+
+            // Add active class to clicked tab and corresponding icon
+            tab.classList.add('active');
+            document.getElementById(`icon-${tab.id.split('-')[1]}`).classList.add('active');
+        });
+    });
+</script>
+
+</body>
+</html>
