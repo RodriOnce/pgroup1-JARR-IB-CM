@@ -13,7 +13,7 @@
 -	Sudo mysql -u root -p
 -	CREATE DATABASE name_db;
 -	USE name_db;
-*From here we create a table and enter data*
+-	*From here we create a table and enter data*
 
 #MongoDB with Docker installation and configuration
 -	In the main folder there is a document called “Docker_Mongo.pdf” with the installation of MongoDB using Docker.
