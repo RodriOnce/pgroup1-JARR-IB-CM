@@ -14,8 +14,10 @@
             --text-color: #333;
             --card-background: #ffffff;
             --header-background: #6f42c1;
-            --button-background: linear-gradient(135deg, #6f42c1, #5a349f);
-            --button-hover-background: linear-gradient(135deg, #5a349f, #4a2d82);
+            --button-background: #480ac6;
+            --button-hover-background: #5a349f;
+            --highlight-color: #4a2d82; /* Button highlight color for light mode */
+            --title-color-light: #fdfdfd;
         }
 
         [data-theme="dark"] {
@@ -23,8 +25,10 @@
             --text-color: #ffffff;
             --card-background: #1e1e1e;
             --header-background: #3e3e3e;
-            --button-background: linear-gradient(135deg, #bb86fc, #985eff);
-            --button-hover-background: linear-gradient(135deg, #985eff, #7c4dff);
+            --button-background: #bb86fc;
+            --button-hover-background: #985eff;
+            --highlight-color: #bb86fc; /* Button highlight color for dark mode */
+            --title-color-light: #ffffff;
         }
 
         body {
@@ -70,31 +74,38 @@
             letter-spacing: 1.5px;
             text-transform: uppercase;
             margin-bottom: 10px;
+            color: var(--title-color-light); /* Dynamic title color */
         }
 
-        header .user-icon {
+        header .user-controls {
             position: absolute;
             top: 20px;
             right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        header .user-icon, header .register {
             display: flex;
             align-items: center;
             cursor: pointer;
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
 
-        header .user-icon img {
+        header .user-icon img, header .register img {
             width: 40px;
             height: 40px;
             border-radius: 50%;
             margin-right: 10px;
         }
 
-        header .user-icon span {
+        header .user-icon span, header .register span {
             font-size: 16px;
             font-weight: bold;
         }
 
-        header .user-icon:hover {
+        header .user-icon:hover, header .register:hover {
             transform: scale(1.1);
             opacity: 0.9;
         }
@@ -104,7 +115,7 @@
             top: 20px;
             left: 20px;
             background: var(--button-background);
-            color: var(--text-color);
+            color: white;
             border: none;
             padding: 10px 15px;
             border-radius: 8px;
@@ -125,7 +136,7 @@
         .container h1 {
             font-size: 3rem;
             margin-bottom: 20px;
-            color: var(--header-background);
+            color: var(--highlight-color);
             font-family: 'Playfair Display', serif;
         }
 
@@ -161,67 +172,19 @@
             margin-bottom: 10px;
         }
 
+        [data-theme="dark"] .action-card img[src*="304579"], [data-theme="dark"] .action-card img[src*="1006771"] {
+            filter: invert(1);
+        }
+
         .action-card h3 {
             font-size: 1.2rem;
-            color: var(--header-background);
+            color: var(--highlight-color);
             margin-bottom: 10px;
         }
 
         .action-card p {
             font-size: 0.9rem;
             color: var(--text-color);
-        }
-
-        .dropdown {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background: var(--card-background);
-            border: 1px solid #ddd;
-            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
-            border-radius: 12px;
-            padding: 20px;
-            z-index: 100;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
-        }
-
-        .action-card:hover .dropdown {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .dropdown input, .dropdown button, .dropdown select {
-            width: calc(100% - 20px);
-            margin: 10px auto;
-            padding: 12px;
-            font-size: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            outline: none;
-            background: var(--card-background);
-            color: var(--text-color);
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .dropdown input:focus, .dropdown button:focus, .dropdown select:focus {
-            border-color: var(--header-background);
-            box-shadow: 0 0 8px rgba(111, 66, 193, 0.4);
-        }
-
-        .dropdown button {
-            background: var(--button-background);
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .dropdown button:hover {
-            background: var(--button-hover-background);
         }
 
         footer {
@@ -272,11 +235,18 @@
             <div class="title">TrackZero</div>
             <img class="logo" src="logo.png" alt="Logo TrackZero">
         </div>
-        <div class="user-icon" onclick="window.location.href='login.php';">
-            <img src="https://cdn-icons-png.flaticon.com/512/747/747376.png" alt="Login Icon">
-            <span>Iniciar Sesión</span>
+        <div class="user-controls">
+            <div class="user-icon" onclick="window.location.href='login.html';">
+                <img src="https://cdn-icons-png.flaticon.com/512/747/747376.png" alt="Login Icon">
+                <span>Iniciar Sesión</span>
+            </div>
+            <div class="register" onclick="window.location.href='registro.php';">
+                <img src="https://cdn-icons-png.flaticon.com/512/2910/2910760.png" alt="Register Icon">
+                <span>Registrarse</span>
+            </div>
         </div>
     </header>
+
     <div class="container">
         <h1>Verificador de Archivos</h1>
         <div class="action-cards">
@@ -285,10 +255,13 @@
                 <h3>Subir Archivo</h3>
                 <p>Escanea tus archivos en busca de amenazas.</p>
                 <div class="dropdown">
-                    <input type="file" id="file-upload">
-                    <button onclick="uploadFile()">Subir y Analizar</button>
+                    <form action="upload.php" method="post" enctype="multipart/form-data">
+                        <input type="file" id="file-upload" name="files[]" multiple>
+                        <button type="submit">Subir y Analizar</button>
+                    </form>
                 </div>
-            </div>
+            </div>                       
+
             <div class="action-card">
                 <img src="https://cdn-icons-png.flaticon.com/512/1006/1006771.png" alt="URL">
                 <h3>Verificar URL</h3>
@@ -298,6 +271,7 @@
                     <button onclick="checkURL()">Verificar</button>
                 </div>
             </div>
+
             <div class="action-card">
                 <img src="https://cdn-icons-png.flaticon.com/512/786/786407.png" alt="Búsqueda">
                 <h3>Búsqueda Global</h3>
@@ -307,21 +281,9 @@
                     <button onclick="globalSearch()">Buscar</button>
                 </div>
             </div>
-            <div class="action-card">
-                <img src="https://cdn-icons-png.flaticon.com/512/3191/3191143.png" alt="Reporte">
-                <h3>Generar Reporte</h3>
-                <p>Obtén un informe detallado de análisis.</p>
-                <div class="dropdown">
-                    <select>
-                        <option value="resumen">Resumen</option>
-                        <option value="detallado">Detallado</option>
-                        <option value="personalizado">Personalizado</option>
-                    </select>
-                    <button onclick="generateReport()">Generar</button>
-                </div>
-            </div>
         </div>
     </div>
+
     <footer>
         Al enviar sus datos, acepta nuestras <a href="#">Condiciones de servicio</a> y nuestro <a href="#">Aviso de privacidad</a>. Por favor, no envíe ninguna información personal.
     </footer>
@@ -333,6 +295,8 @@
             const currentTheme = body.getAttribute('data-theme');
             const newTheme = currentTheme === 'light' ? 'dark' : 'light';
             body.setAttribute('data-theme', newTheme);
+            const toggleButton = document.querySelector('.dark-mode-toggle');
+            toggleButton.textContent = newTheme === 'light' ? 'Modo Oscuro' : 'Modo Claro';
         }
 
         function uploadFile() {
@@ -345,10 +309,6 @@
 
         function globalSearch() {
             alert('Búsqueda completada');
-        }
-
-        function generateReport() {
-            alert('Reporte generado');
         }
     </script>
 </body>
