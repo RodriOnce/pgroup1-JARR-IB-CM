@@ -77,37 +77,36 @@
             color: var(--title-color-light); /* Dynamic title color */
         }
 
-        header .user-controls {
+        header .user-buttons {
             position: absolute;
             top: 20px;
             right: 20px;
             display: flex;
-            align-items: center;
             gap: 15px;
         }
 
-        header .user-icon, header .register {
+        header .user-icon, header .register-button {
             display: flex;
             align-items: center;
             cursor: pointer;
             transition: transform 0.3s ease, opacity 0.3s ease;
-        }
-
-        header .user-icon img, header .register img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
-        header .user-icon span, header .register span {
-            font-size: 16px;
+            background: var(--button-background);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
             font-weight: bold;
+            text-decoration: none;
         }
 
-        header .user-icon:hover, header .register:hover {
+        header .user-icon img {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+        }
+
+        header .user-icon:hover, header .register-button:hover {
             transform: scale(1.1);
-            opacity: 0.9;
+            background: var(--button-hover-background);
         }
 
         header .dark-mode-toggle {
@@ -187,6 +186,58 @@
             color: var(--text-color);
         }
 
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: var(--card-background);
+            border: 1px solid #ddd;
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            padding: 20px;
+            z-index: 100;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .action-card:hover .dropdown {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .dropdown input, .dropdown button, .dropdown select {
+            width: calc(100% - 20px);
+            margin: 10px auto;
+            padding: 12px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            outline: none;
+            background: var(--card-background);
+            color: var(--text-color);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .dropdown input:focus, .dropdown button:focus, .dropdown select:focus {
+            border-color: var(--header-background);
+            box-shadow: 0 0 8px rgba(111, 66, 193, 0.4);
+        }
+
+        .dropdown button {
+            background: var(--button-background);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .dropdown button:hover {
+            background: var(--button-hover-background);
+        }
+
         footer {
             font-size: 0.9rem;
             text-align: center;
@@ -235,15 +286,12 @@
             <div class="title">TrackZero</div>
             <img class="logo" src="logo.png" alt="Logo TrackZero">
         </div>
-        <div class="user-controls">
-            <div class="user-icon" onclick="window.location.href='login.html';">
+        <div class="user-buttons">
+            <a href="registro.php" class="register-button">Regístrate</a>
+            <a href="login.html" class="user-icon">
                 <img src="https://cdn-icons-png.flaticon.com/512/747/747376.png" alt="Login Icon">
                 <span>Iniciar Sesión</span>
-            </div>
-            <div class="register" onclick="window.location.href='registro.php';">
-                <img src="https://cdn-icons-png.flaticon.com/512/2910/2910760.png" alt="Register Icon">
-                <span>Registrarse</span>
-            </div>
+            </a>
         </div>
     </header>
 
