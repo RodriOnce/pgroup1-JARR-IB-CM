@@ -1,6 +1,6 @@
 # pgroup1-JARR-IB-CM
-# 1. Falta poner como se sacaba la API (registro mediante VirusTotal).
 #S.O.
+# 1. Falta poner como se sacaba la API (registro mediante VirusTotal).
 - We used Ubuntu Server 22.04 (Jellyfish)
 
 #MariaDB installation and configuration
