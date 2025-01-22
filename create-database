@@ -1,0 +1,16 @@
+CREATE TABLE empleados (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+
+----------------------------------------------------------------
+
+INSERT INTO empleados (nombre, password) VALUES 
+('Carolina', SHA2('passwordCarolina', 256)),
+('Ivan', SHA2('passwordIvan', 256)),
+('Jose Andres', SHA2('passwordJoseAndres', 256));
+
+----------------------------------------------------------------
+
+
