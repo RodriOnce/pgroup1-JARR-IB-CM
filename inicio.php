@@ -36,6 +36,11 @@ if (isset($_POST['logout'])) {
             --dropdown-background: #fefefe;
             --dropdown-border: #ddd;
             --section-line-color: #6f42c1;
+            --sidebar-background: #f5f5f5;
+            --sidebar-border-color: #ddd;
+            --sidebar-link-hover: linear-gradient(135deg, #6f42c1, #5a349f);
+            --sidebar-active-link: #6f42c1;
+            --sidebar-text-color: #333;
         }
 
         [data-theme="dark"] {
@@ -48,15 +53,77 @@ if (isset($_POST['logout'])) {
             --dropdown-background: #2e2e2e;
             --dropdown-border: #444;
             --section-line-color: #bb86fc;
+            --sidebar-background: #1e1e1e;
+            --sidebar-border-color: #444;
+            --sidebar-link-hover: linear-gradient(135deg, #bb86fc, #985eff);
+            --sidebar-active-link: #bb86fc;
+            --sidebar-text-color: #ffffff;
         }
 
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
+            display: flex;
             background-color: var(--background-color);
             color: var(--text-color);
             transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-background);
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            border-right: 1px solid var(--sidebar-border-color);
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--sidebar-text-color);
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 15px;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: var(--sidebar-text-color);
+            font-size: 1rem;
+            padding: 10px 15px;
+            display: block;
+            border-radius: 8px;
+            transition: background 0.3s ease, color 0.3s ease;
+            font-weight: 500;
+        }
+
+        .sidebar ul li a:hover {
+            background: var(--sidebar-link-hover);
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar ul li a.active {
+            background-color: var(--sidebar-active-link);
+            color: white;
+        }
+
+        .main-content {
+            margin-left: 270px;
+            padding: 20px;
+            width: calc(100% - 270px);
         }
 
         header {
@@ -109,27 +176,26 @@ if (isset($_POST['logout'])) {
         }
 
         .dashboard-container {
-            padding: 40px 20px;
-            max-width: 1200px;
-            margin: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
         .section {
-            margin-bottom: 30px;
+            flex: 1 1 calc(33.333% - 20px);
+            background: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .section-title {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
             color: var(--text-color);
-            margin-bottom: 20px;
             border-bottom: 2px solid var(--section-line-color);
             padding-bottom: 5px;
-        }
-
-        .card-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
         }
 
         .card {
@@ -137,18 +203,11 @@ if (isset($_POST['logout'])) {
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+            margin-top: 10px;
         }
 
         .card h3 {
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             margin-bottom: 10px;
             color: var(--text-color);
         }
@@ -158,73 +217,35 @@ if (isset($_POST['logout'])) {
             color: var(--text-color);
         }
 
-        .dropdown {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--dropdown-background);
-            border: 1px solid var(--dropdown-border);
-            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
-            border-radius: 10px;
-            padding: 15px;
-            z-index: 100;
-            width: 90%;
-            max-width: 300px;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .card:hover .dropdown {
-            display: block;
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .dropdown a {
-            display: block;
-            text-decoration: none;
-            color: var(--text-color);
-            margin-bottom: 10px;
-            font-size: 1rem;
-            padding: 10px;
-            border-radius: 8px;
-            background: var(--dropdown-background);
-            transition: background 0.3s ease;
-        }
-
-        .dropdown a:hover {
-            background: var(--button-hover-background);
-            color: white;
-        }
-
-        .dropdown.empty p {
-            color: var(--text-color);
-            font-size: 0.9rem;
-            text-align: center;
-            margin: 0;
-        }
-
         .dropdown.empty {
-            padding: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-color);
         }
     </style>
 </head>
 <body data-theme="light">
-    <header>
-        <button class="dark-mode-toggle" onclick="toggleDarkMode()">Modo Oscuro</button>
-        <h1>Bienvenido, <?php echo $user; ?>!</h1>
-        <form method="POST" style="margin: 0;">
-            <button type="submit" name="logout" class="logout-button">Cerrar Sesión</button>
-        </form>
-    </header>
+    <div class="sidebar">
+        <h2>Menú</h2>
+        <ul>
+            <li><a href="#" class="active">Editar Perfil</a></li>
+            <li><a href="#">Cambiar Idioma</a></li>
+            <li><a href="#">Centro de Ayuda</a></li>
+        </ul>
+    </div>
 
-    <div class="dashboard-container">
-        <div class="section">
-            <h2 class="section-title">Mis Documentos</h2>
-            <div class="card-container">
+    <div class="main-content">
+        <header>
+            <button class="dark-mode-toggle" onclick="toggleDarkMode()">Modo Oscuro</button>
+            <h1>Bienvenido, <?php echo $user; ?>!</h1>
+            <form method="POST" style="margin: 0;">
+                <button type="submit" name="logout" class="logout-button">Cerrar Sesión</button>
+            </form>
+        </header>
+
+        <div class="dashboard-container">
+            <div class="section">
+                <h2 class="section-title">Mis Documentos</h2>
                 <div class="card">
                     <h3>Documentos recientes</h3>
                     <p>Accede rápidamente a los documentos más recientes.</p>
@@ -233,11 +254,9 @@ if (isset($_POST['logout'])) {
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="section">
-            <h2 class="section-title">Mis Descargas</h2>
-            <div class="card-container">
+            <div class="section">
+                <h2 class="section-title">Mis Descargas</h2>
                 <div class="card">
                     <h3>Archivos descargados</h3>
                     <p>Revisa los archivos que has descargado.</p>
@@ -246,11 +265,9 @@ if (isset($_POST['logout'])) {
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="section">
-            <h2 class="section-title">Mis Análisis</h2>
-            <div class="card-container">
+            <div class="section">
+                <h2 class="section-title">Mis Análisis</h2>
                 <div class="card">
                     <h3>Resultados de análisis</h3>
                     <p>Consulta los detalles de tus análisis realizados.</p>
