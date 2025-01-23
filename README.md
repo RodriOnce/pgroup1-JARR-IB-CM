@@ -1,7 +1,13 @@
 # pgroup1-JARR-IB-CM
 #S.O.
-# 1. Falta poner como se sacaba la API (registro mediante VirusTotal).
+
 - We used Ubuntu Server 22.04 (Jellyfish)
+
+
+#How to get the API key (via VirusTotal)
+- Go to the homepage and log in to your account.
+- You access the API Key section.
+- In your profile, your API key should appear (hidden).
 
 #MariaDB installation and configuration
 -	Sudo apt install mariadb-server
