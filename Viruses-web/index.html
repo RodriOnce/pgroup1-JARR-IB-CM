@@ -289,8 +289,8 @@
                 <p>Escanea tus archivos en busca de amenazas.</p>
                 <div class="dropdown">
                     <form action="upload.php" method="post" enctype="multipart/form-data">
-                        <input type="file" id="file-upload" name="files[]" multiple>
-                        <button type="submit">Subir y Analizar</button>
+                        <input type="file" name="files[]" webkitdirectory directory multiple>
+                        <input type="submit" value="Subir">
                     </form>
                 </div>
             </div>                      
