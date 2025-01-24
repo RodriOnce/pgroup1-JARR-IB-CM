@@ -298,17 +298,43 @@
     <div class="container">
         <h1>Verificador de Archivos</h1>
         <div class="action-cards">
-            <div class="action-card">
-                <img src="https://cdn-icons-png.flaticon.com/512/304/304579.png" alt="Archivo">
-                <h3>Subir Archivo</h3>
-                <p>Escanea tus archivos en busca de amenazas.</p>
-                <div class="dropdown">
-                    <form action="upload.php" method="post" enctype="multipart/form-data">
-                        <input type="file" id="file-upload" name="files[]" multiple>
-                        <button type="submit">Subir y Analizar</button>
-                    </form>
-                </div>
-            </div>                       
+             <div class="action-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/304/304579.png" alt="Archivo">
+            <h3>Subir Archivos/Carpetas</h3>
+            <p>Selecciona archivos individuales o carpetas completas.</p>
+            <div class="dropdown">
+                <form action="upload.php" method="post" enctype="multipart/form-data">
+        
+                    <input type="file"
+                           id="file-input"
+                           name="files[]"
+                           multiple
+                           style="display: none;">
+        
+                    <input type="file"
+                           id="folder-input"
+                           name="folders[]"
+                           webkitdirectory
+                           style="display: none;"
+                           multiple>
+        
+                    <div class="upload-options">
+                        <button type="button"
+                                class="upload-btn"
+                                onclick="document.getElementById('file-input').click()">
+                            📄 Seleccionar Archivos
+                        </button>
+        
+                        <button type="button"
+                                class="upload-btn"
+                                onclick="document.getElementById('folder-input').click()">
+                            📁 Seleccionar Carpeta
+                        </button>
+                    </div>
+                    <button type="submit" class="analyze-btn">Analizar Todo</button>
+                </form>
+            </div>
+        </div>                      
 
             <div class="action-card">
                 <img src="https://cdn-icons-png.flaticon.com/512/1006/1006771.png" alt="URL">
