@@ -1,4 +1,5 @@
 # pgroup1-JARR-IB-CM
+
 #S.O.
 
 - We used Ubuntu Server 22.04 (Jellyfish)
@@ -39,3 +40,17 @@
 -	sudo apt install php libapache2-mod-php php-mysql
 -	php--version
 
+
+****We will continue to expand the content***
+
+
+////////////////////////////////////
+
+All folders and files are created in the /var/www/html/ directory.
+
+We add this image to show the permissions and owners of the files and folders:
+
+![imagen](https://github.com/user-attachments/assets/eab73461-dff7-4ee1-9774-84c339392c10)
+
+
+***We will continue to expand the content***
