@@ -16,7 +16,7 @@
             --header-background: #6f42c1;
             --button-background: #480ac6;
             --button-hover-background: #5a349f;
-            --highlight-color: #4a2d82;
+            --highlight-color: #4a2d82; /* Button highlight color for light mode */
             --title-color-light: #fdfdfd;
         }
 
@@ -27,7 +27,7 @@
             --header-background: #3e3e3e;
             --button-background: #bb86fc;
             --button-hover-background: #985eff;
-            --highlight-color: #bb86fc;
+            --highlight-color: #bb86fc; /* Button highlight color for dark mode */
             --title-color-light: #ffffff;
         }
 
@@ -74,7 +74,7 @@
             letter-spacing: 1.5px;
             text-transform: uppercase;
             margin-bottom: 10px;
-            color: var(--title-color-light);
+            color: var(--title-color-light); /* Dynamic title color */
         }
 
         header .user-buttons {
@@ -239,15 +239,20 @@
         }
 
         footer {
-            background-color: #f4f4f4;
+            font-size: 0.9rem;
             text-align: center;
-            padding: 10px 20px;
+            padding: 20px;
+            background-color: var(--card-background);
+            margin-top: 50px;
             border-top: 1px solid #ddd;
         }
+
         footer a {
-            color: #007BFF;
+            color: var(--header-background);
             text-decoration: none;
+            font-weight: bold;
         }
+
         footer a:hover {
             text-decoration: underline;
         }
@@ -260,7 +265,6 @@
             height: auto;
             transform: translateX(50%);
             opacity: 0.1;
-            pointer-events: none;
         }
 
         @media (max-width: 768px) {
@@ -275,11 +279,7 @@
         }
     </style>
 </head>
-
-
 <body data-theme="light">
-
-
     <header>
         <button class="dark-mode-toggle" onclick="toggleDarkMode()">Modo Oscuro</button>
         <div class="logo-container">
@@ -295,61 +295,34 @@
         </div>
     </header>
 
-
-
-    <div class="container"> <!-- Inicio Bloque Verificador -->
-         <h1>Verificador de Archivos</h1>
+    <div class="container">
+        <h1>Verificador de Archivos</h1>
         <div class="action-cards">
             <div class="action-card">
-    <img src="https://cdn-icons-png.flaticon.com/512/304/304579.png" alt="Archivo">
-    <h3>Subir Archivos/Carpetas</h3>
-    <p>Selecciona archivos individuales o carpetas completas.</p>
-    <div class="dropdown">
-        <form action="upload.php" method="post" enctype="multipart/form-data">
+                <img src="https://cdn-icons-png.flaticon.com/512/304/304579.png" alt="Archivo">
+                <h3>Subir Archivo</h3>
+                <p>Escanea tus archivos en busca de amenazas.</p>
+                <div class="dropdown">
+                    <form action="upload.php" method="post" enctype="multipart/form-data">
+                        <input type="file" id="file-upload" name="files[]" multiple>
+                        <button type="submit">Subir y Analizar</button>
+                    </form>
+                </div>
+            </div>                       
 
-            <input type="file"
-                   id="file-input"
-                   name="files[]"
-                   multiple
-                   style="display: none;">
-
-            <input type="file"
-                   id="folder-input"
-                   name="folders[]"
-                   webkitdirectory
-                   style="display: none;"
-                   multiple>
-
-            <div class="upload-options">
-                <button type="button"
-                        class="upload-btn"
-                        onclick="document.getElementById('file-input').click()">
-                    📄 Seleccionar Archivos
-                </button>
-
-                <button type="button"
-                        class="upload-btn"
-                        onclick="document.getElementById('folder-input').click()">
-                    📁 Seleccionar Carpeta
-                </button>
-            </div>
-
-            <button type="submit" class="analyze-btn">Analizar Todo</button>
-        </form>
-    </div>
-</div> <!-- Fin Bloque Verificador -->
-
-            <div class="action-card"> <!-- Inicio Bloque URL -->
+            <div class="action-card">
                 <img src="https://cdn-icons-png.flaticon.com/512/1006/1006771.png" alt="URL">
                 <h3>Verificar URL</h3>
                 <p>Analiza enlaces para detectar contenido malicioso.</p>
-                <div class="dropdown">
-                    <input type="text" placeholder="Ingrese URL">
-                    <button onclick="checkURL()">Verificar</button>
-                </div>
-            </div> <!-- Fin Bloque URL -->
+                <form method="POST" action="check_url.php">
+                    <div class="dropdown">
+                        <input type="text" name="url" placeholder="Ingrese URL" required>
+                        <button type="submit" aria-label="Verificar URL">Verificar</button>
+                    </div>
+                </form>
+            </div>
 
-            <div class="action-card"> <!-- Inicio Bloque Global -->
+            <div class="action-card">
                 <img src="https://cdn-icons-png.flaticon.com/512/786/786407.png" alt="Búsqueda">
                 <h3>Búsqueda Global</h3>
                 <p>Consulta nuestra base de datos de amenazas conocidas.</p>
@@ -357,18 +330,13 @@
                     <input type="text" placeholder="Buscar en la base de datos">
                     <button onclick="globalSearch()">Buscar</button>
                 </div>
-            </div> <!-- Fin Bloque Global -->
+            </div>
         </div>
     </div>
 
-
     <footer>
-        <p>
-            Al enviar sus datos, acepta nuestras <a href="#">Condiciones de servicio</a> y nuestro <a href="#">Aviso de privacidad</a>. Por favor, no envíe ninguna información personal.
-        </p>
+        Al enviar sus datos, acepta nuestras <a href="#">Condiciones de servicio</a> y nuestro <a href="#">Aviso de privacidad</a>. Por favor, no envíe ninguna información personal.
     </footer>
-
-
     <img class="sphere" src="https://geodomos.es/wp-content/uploads/2024/06/oficial.png" alt="Decoración Esférica">
 
     <script>
@@ -393,7 +361,5 @@
             alert('Búsqueda completada');
         }
     </script>
-
 </body>
-
 </html>
