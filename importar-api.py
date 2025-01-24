@@ -9,7 +9,7 @@ from datetime import datetime
 
 # Configuración de variables
 
-API_KEY = '446f02363118eb9dc67c1c250a5eaacd971f6ccf4a26b93b6a07b175bbcc4777'
+API_KEY = 'PLACE HERE YOUR API KEY'
 DIRECTORIO_ORIGEN = '/var/www/html/escanear'
 DIRECTORIO_SANO = '/var/www/html/sano'
 DIRECTORIO_INFECCION = '/var/www/html/infectado'
