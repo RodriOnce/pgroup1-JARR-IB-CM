@@ -61,6 +61,24 @@
             padding: 15px;
             border-radius: 5px;
         }
+
+                button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+        
     </style>
 </head>
 <body>
@@ -115,7 +133,7 @@ elseif (!empty($_FILES['folders']['name'][0])) {
     echo "<div class='no-files'>No se ha seleccionado ninguna carpeta.</div>";
 }
 ?>
-
+ <button onclick="window.location.href='index.html';">Volver a intentar</button>
 </div>
 </body>
 </html>
