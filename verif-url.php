@@ -113,7 +113,7 @@
         error_reporting(E_ALL);
 
         // Clave de API de VirusTotal (debes obtenerla desde tu cuenta de VirusTotal)
-        $apiKey = '446f02363118eb9dc67c1c250a5eaacd971f6ccf4a26b93b6a07b175bbcc4777';
+        $apiKey = 'PLACE HERE YOUR API KEY';
 
         // Verificar si se ha enviado una URL
         if (isset($_POST['url'])) {
