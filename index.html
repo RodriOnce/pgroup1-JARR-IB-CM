@@ -14,8 +14,10 @@
             --text-color: #333;
             --card-background: #ffffff;
             --header-background: #6f42c1;
-            --button-background: linear-gradient(135deg, #6f42c1, #5a349f);
-            --button-hover-background: linear-gradient(135deg, #5a349f, #4a2d82);
+            --button-background: #480ac6;
+            --button-hover-background: #5a349f;
+            --highlight-color: #4a2d82;
+            --title-color-light: #fdfdfd;
         }
 
         [data-theme="dark"] {
@@ -23,8 +25,10 @@
             --text-color: #ffffff;
             --card-background: #1e1e1e;
             --header-background: #3e3e3e;
-            --button-background: linear-gradient(135deg, #bb86fc, #985eff);
-            --button-hover-background: linear-gradient(135deg, #985eff, #7c4dff);
+            --button-background: #bb86fc;
+            --button-hover-background: #985eff;
+            --highlight-color: #bb86fc;
+            --title-color-light: #ffffff;
         }
 
         body {
@@ -70,33 +74,39 @@
             letter-spacing: 1.5px;
             text-transform: uppercase;
             margin-bottom: 10px;
+            color: var(--title-color-light);
         }
 
-        header .user-icon {
+        header .user-buttons {
             position: absolute;
             top: 20px;
             right: 20px;
             display: flex;
+            gap: 15px;
+        }
+
+        header .user-icon, header .register-button {
+            display: flex;
             align-items: center;
             cursor: pointer;
             transition: transform 0.3s ease, opacity 0.3s ease;
+            background: var(--button-background);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-decoration: none;
         }
 
         header .user-icon img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
         }
 
-        header .user-icon span {
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        header .user-icon:hover {
+        header .user-icon:hover, header .register-button:hover {
             transform: scale(1.1);
-            opacity: 0.9;
+            background: var(--button-hover-background);
         }
 
         header .dark-mode-toggle {
@@ -104,7 +114,7 @@
             top: 20px;
             left: 20px;
             background: var(--button-background);
-            color: var(--text-color);
+            color: white;
             border: none;
             padding: 10px 15px;
             border-radius: 8px;
@@ -125,7 +135,7 @@
         .container h1 {
             font-size: 3rem;
             margin-bottom: 20px;
-            color: var(--header-background);
+            color: var(--highlight-color);
             font-family: 'Playfair Display', serif;
         }
 
@@ -161,9 +171,13 @@
             margin-bottom: 10px;
         }
 
+        [data-theme="dark"] .action-card img[src*="304579"], [data-theme="dark"] .action-card img[src*="1006771"] {
+            filter: invert(1);
+        }
+
         .action-card h3 {
             font-size: 1.2rem;
-            color: var(--header-background);
+            color: var(--highlight-color);
             margin-bottom: 10px;
         }
 
@@ -225,20 +239,15 @@
         }
 
         footer {
-            font-size: 0.9rem;
+            background-color: #f4f4f4;
             text-align: center;
-            padding: 20px;
-            background-color: var(--card-background);
-            margin-top: 50px;
+            padding: 10px 20px;
             border-top: 1px solid #ddd;
         }
-
         footer a {
-            color: var(--header-background);
+            color: #007BFF;
             text-decoration: none;
-            font-weight: bold;
         }
-
         footer a:hover {
             text-decoration: underline;
         }
@@ -251,6 +260,7 @@
             height: auto;
             transform: translateX(50%);
             opacity: 0.1;
+            pointer-events: none;
         }
 
         @media (max-width: 768px) {
@@ -265,63 +275,81 @@
         }
     </style>
 </head>
+
+
 <body data-theme="light">
+
+
     <header>
         <button class="dark-mode-toggle" onclick="toggleDarkMode()">Modo Oscuro</button>
         <div class="logo-container">
             <div class="title">TrackZero</div>
             <img class="logo" src="logo.png" alt="Logo TrackZero">
         </div>
-        <div class="user-icon" onclick="window.location.href='login.html';">
-            <img src="https://cdn-icons-png.flaticon.com/512/747/747376.png" alt="Login Icon">
-            <span>Iniciar Sesión</span>
+        <div class="user-buttons">
+            <a href="registro.php" class="register-button">Regístrate</a>
+            <a href="login.html" class="user-icon">
+                <img src="https://cdn-icons-png.flaticon.com/512/747/747376.png" alt="Login Icon">
+                <span>Iniciar Sesión</span>
+            </a>
         </div>
     </header>
 
-    <div class="container">
-        <h1>Verificador de Archivos</h1>
+
+
+    <div class="container"> <!-- Inicio Bloque Verificador -->
+         <h1>Verificador de Archivos</h1>
         <div class="action-cards">
-
-
             <div class="action-card">
-                <img src="https://cdn-icons-png.flaticon.com/512/304/304579.png" alt="Archivo">
-                <h3>Subir Archivo</h3>
-                <p>Escanea tus archivos en busca de amenazas.</p>
-                <div class="dropdown">
-                    <form action="upload.php" method="post" enctype="multipart/form-data">
-                        <input type="file" name="files[]" webkitdirectory directory multiple>
-                        <input type="submit" value="Subir">
-                    </form>
-                </div>
-            </div>                      
-            <!-- <script>
-                function uploadFiles() {
-                    const inputElement = document.getElementById('file-upload');
-                    const files = inputElement.files;
-                    if (files.length === 0) {
-                        alert('No se han seleccionado archivos.');
-                        return;
-                    }
-            
-                    let fileNames = Array.from(files).map(file => file.name).join(', ');
-                    alert(`Archivos seleccionados: ${fileNames}`);
-                    
-                }
-            </script> -->
-            
-            <div class="action-card">
+    <img src="https://cdn-icons-png.flaticon.com/512/304/304579.png" alt="Archivo">
+    <h3>Subir Archivos/Carpetas</h3>
+    <p>Selecciona archivos individuales o carpetas completas.</p>
+    <div class="dropdown">
+        <form action="upload.php" method="post" enctype="multipart/form-data">
+
+            <input type="file"
+                   id="file-input"
+                   name="files[]"
+                   multiple
+                   style="display: none;">
+
+            <input type="file"
+                   id="folder-input"
+                   name="folders[]"
+                   webkitdirectory
+                   style="display: none;"
+                   multiple>
+
+            <div class="upload-options">
+                <button type="button"
+                        class="upload-btn"
+                        onclick="document.getElementById('file-input').click()">
+                    📄 Seleccionar Archivos
+                </button>
+
+                <button type="button"
+                        class="upload-btn"
+                        onclick="document.getElementById('folder-input').click()">
+                    📁 Seleccionar Carpeta
+                </button>
+            </div>
+
+            <button type="submit" class="analyze-btn">Analizar Todo</button>
+        </form>
+    </div>
+</div> <!-- Fin Bloque Verificador -->
+
+            <div class="action-card"> <!-- Inicio Bloque URL -->
                 <img src="https://cdn-icons-png.flaticon.com/512/1006/1006771.png" alt="URL">
                 <h3>Verificar URL</h3>
                 <p>Analiza enlaces para detectar contenido malicioso.</p>
-                <form method="POST" action="check_url.php">
-                    <div class="dropdown">
-                        <input type="text" name="url" placeholder="Ingrese URL" required>
-                        <button type="submit" aria-label="Verificar URL">Verificar</button>
-                    </div>
-                </form>
-            </div>
+                <div class="dropdown">
+                    <input type="text" placeholder="Ingrese URL">
+                    <button onclick="checkURL()">Verificar</button>
+                </div>
+            </div> <!-- Fin Bloque URL -->
 
-            <div class="action-card">
+            <div class="action-card"> <!-- Inicio Bloque Global -->
                 <img src="https://cdn-icons-png.flaticon.com/512/786/786407.png" alt="Búsqueda">
                 <h3>Búsqueda Global</h3>
                 <p>Consulta nuestra base de datos de amenazas conocidas.</p>
@@ -329,29 +357,18 @@
                     <input type="text" placeholder="Buscar en la base de datos">
                     <button onclick="globalSearch()">Buscar</button>
                 </div>
-            </div>
-
-            <div class="action-card">
-                <img src="https://cdn-icons-png.flaticon.com/512/3191/3191143.png" alt="Reporte">
-                <h3>Generar Reporte</h3>
-                <p>Obtén un informe detallado de análisis.</p>
-                <div class="dropdown">
-                    <select>
-                        <option value="resumen">Resumen</option>
-                        <option value="detallado">Detallado</option>
-                        <option value="personalizado">Personalizado</option>
-                    </select>
-                    <button onclick="generateReport()">Generar</button>
-                </div>
-            </div>
-
+            </div> <!-- Fin Bloque Global -->
         </div>
-
     </div>
 
+
     <footer>
-        Al enviar sus datos, acepta nuestras <a href="#">Condiciones de servicio</a> y nuestro <a href="#">Aviso de privacidad</a>. Por favor, no envíe ninguna información personal.
+        <p>
+            Al enviar sus datos, acepta nuestras <a href="#">Condiciones de servicio</a> y nuestro <a href="#">Aviso de privacidad</a>. Por favor, no envíe ninguna información personal.
+        </p>
     </footer>
+
+
     <img class="sphere" src="https://geodomos.es/wp-content/uploads/2024/06/oficial.png" alt="Decoración Esférica">
 
     <script>
@@ -360,6 +377,8 @@
             const currentTheme = body.getAttribute('data-theme');
             const newTheme = currentTheme === 'light' ? 'dark' : 'light';
             body.setAttribute('data-theme', newTheme);
+            const toggleButton = document.querySelector('.dark-mode-toggle');
+            toggleButton.textContent = newTheme === 'light' ? 'Modo Oscuro' : 'Modo Claro';
         }
 
         function uploadFile() {
@@ -373,10 +392,8 @@
         function globalSearch() {
             alert('Búsqueda completada');
         }
-
-        function generateReport() {
-            alert('Reporte generado');
-        }
     </script>
+
 </body>
+
 </html>
