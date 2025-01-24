@@ -14,10 +14,8 @@
             --text-color: #333;
             --card-background: #ffffff;
             --header-background: #6f42c1;
-            --button-background: #480ac6;
-            --button-hover-background: #5a349f;
-            --highlight-color: #4a2d82; /* Button highlight color for light mode */
-            --title-color-light: #fdfdfd;
+            --button-background: linear-gradient(135deg, #6f42c1, #5a349f);
+            --button-hover-background: linear-gradient(135deg, #5a349f, #4a2d82);
         }
 
         [data-theme="dark"] {
@@ -25,10 +23,8 @@
             --text-color: #ffffff;
             --card-background: #1e1e1e;
             --header-background: #3e3e3e;
-            --button-background: #bb86fc;
-            --button-hover-background: #985eff;
-            --highlight-color: #bb86fc; /* Button highlight color for dark mode */
-            --title-color-light: #ffffff;
+            --button-background: linear-gradient(135deg, #bb86fc, #985eff);
+            --button-hover-background: linear-gradient(135deg, #985eff, #7c4dff);
         }
 
         body {
@@ -74,39 +70,33 @@
             letter-spacing: 1.5px;
             text-transform: uppercase;
             margin-bottom: 10px;
-            color: var(--title-color-light); /* Dynamic title color */
         }
 
-        header .user-buttons {
+        header .user-icon {
             position: absolute;
             top: 20px;
             right: 20px;
             display: flex;
-            gap: 15px;
-        }
-
-        header .user-icon, header .register-button {
-            display: flex;
             align-items: center;
             cursor: pointer;
             transition: transform 0.3s ease, opacity 0.3s ease;
-            background: var(--button-background);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-weight: bold;
-            text-decoration: none;
         }
 
         header .user-icon img {
-            width: 20px;
-            height: 20px;
-            margin-right: 5px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
         }
 
-        header .user-icon:hover, header .register-button:hover {
+        header .user-icon span {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        header .user-icon:hover {
             transform: scale(1.1);
-            background: var(--button-hover-background);
+            opacity: 0.9;
         }
 
         header .dark-mode-toggle {
@@ -114,7 +104,7 @@
             top: 20px;
             left: 20px;
             background: var(--button-background);
-            color: white;
+            color: var(--text-color);
             border: none;
             padding: 10px 15px;
             border-radius: 8px;
@@ -135,7 +125,7 @@
         .container h1 {
             font-size: 3rem;
             margin-bottom: 20px;
-            color: var(--highlight-color);
+            color: var(--header-background);
             font-family: 'Playfair Display', serif;
         }
 
@@ -171,13 +161,9 @@
             margin-bottom: 10px;
         }
 
-        [data-theme="dark"] .action-card img[src*="304579"], [data-theme="dark"] .action-card img[src*="1006771"] {
-            filter: invert(1);
-        }
-
         .action-card h3 {
             font-size: 1.2rem;
-            color: var(--highlight-color);
+            color: var(--header-background);
             margin-bottom: 10px;
         }
 
@@ -286,38 +272,53 @@
             <div class="title">TrackZero</div>
             <img class="logo" src="logo.png" alt="Logo TrackZero">
         </div>
-        <div class="user-buttons">
-            <a href="registro.php" class="register-button">Regístrate</a>
-            <a href="login.html" class="user-icon">
-                <img src="https://cdn-icons-png.flaticon.com/512/747/747376.png" alt="Login Icon">
-                <span>Iniciar Sesión</span>
-            </a>
+        <div class="user-icon" onclick="window.location.href='login.html';">
+            <img src="https://cdn-icons-png.flaticon.com/512/747/747376.png" alt="Login Icon">
+            <span>Iniciar Sesión</span>
         </div>
     </header>
 
     <div class="container">
         <h1>Verificador de Archivos</h1>
         <div class="action-cards">
+
+
             <div class="action-card">
                 <img src="https://cdn-icons-png.flaticon.com/512/304/304579.png" alt="Archivo">
                 <h3>Subir Archivo</h3>
                 <p>Escanea tus archivos en busca de amenazas.</p>
                 <div class="dropdown">
                     <form action="upload.php" method="post" enctype="multipart/form-data">
-                        <input type="file" id="file-upload" name="files[]" multiple>
-                        <button type="submit">Subir y Analizar</button>
+                        <input type="file" name="files[]" webkitdirectory directory multiple>
+                        <input type="submit" value="Subir">
                     </form>
                 </div>
-            </div>                       
-
+            </div>                      
+            <!-- <script>
+                function uploadFiles() {
+                    const inputElement = document.getElementById('file-upload');
+                    const files = inputElement.files;
+                    if (files.length === 0) {
+                        alert('No se han seleccionado archivos.');
+                        return;
+                    }
+            
+                    let fileNames = Array.from(files).map(file => file.name).join(', ');
+                    alert(`Archivos seleccionados: ${fileNames}`);
+                    
+                }
+            </script> -->
+            
             <div class="action-card">
                 <img src="https://cdn-icons-png.flaticon.com/512/1006/1006771.png" alt="URL">
                 <h3>Verificar URL</h3>
                 <p>Analiza enlaces para detectar contenido malicioso.</p>
-                <div class="dropdown">
-                    <input type="text" placeholder="Ingrese URL">
-                    <button onclick="checkURL()">Verificar</button>
-                </div>
+                <form method="POST" action="check_url.php">
+                    <div class="dropdown">
+                        <input type="text" name="url" placeholder="Ingrese URL" required>
+                        <button type="submit" aria-label="Verificar URL">Verificar</button>
+                    </div>
+                </form>
             </div>
 
             <div class="action-card">
@@ -329,7 +330,23 @@
                     <button onclick="globalSearch()">Buscar</button>
                 </div>
             </div>
+
+            <div class="action-card">
+                <img src="https://cdn-icons-png.flaticon.com/512/3191/3191143.png" alt="Reporte">
+                <h3>Generar Reporte</h3>
+                <p>Obtén un informe detallado de análisis.</p>
+                <div class="dropdown">
+                    <select>
+                        <option value="resumen">Resumen</option>
+                        <option value="detallado">Detallado</option>
+                        <option value="personalizado">Personalizado</option>
+                    </select>
+                    <button onclick="generateReport()">Generar</button>
+                </div>
+            </div>
+
         </div>
+
     </div>
 
     <footer>
@@ -343,8 +360,6 @@
             const currentTheme = body.getAttribute('data-theme');
             const newTheme = currentTheme === 'light' ? 'dark' : 'light';
             body.setAttribute('data-theme', newTheme);
-            const toggleButton = document.querySelector('.dark-mode-toggle');
-            toggleButton.textContent = newTheme === 'light' ? 'Modo Oscuro' : 'Modo Claro';
         }
 
         function uploadFile() {
@@ -357,6 +372,10 @@
 
         function globalSearch() {
             alert('Búsqueda completada');
+        }
+
+        function generateReport() {
+            alert('Reporte generado');
         }
     </script>
 </body>
