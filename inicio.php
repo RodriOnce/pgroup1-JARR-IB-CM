@@ -40,24 +40,20 @@ if (isset($_GET['logout'])) {
     exit();
 }
 
-// Obtener todos los empleados
+// Obtener datos
 $empleados = $conn->query("SELECT * FROM empleados")->fetchAll(PDO::FETCH_ASSOC);
 
-// Datos simulados para demostración
-$datos_simulados = [
-    'archivos_subidos' => [
-        ['id' => 1, 'nombre' => 'informe.pdf', 'fecha' => '2024-03-15'],
-        ['id' => 2, 'nombre' => 'presentacion.pptx', 'fecha' => '2024-03-16']
-    ],
-    'archivos_descargados' => [
-        ['id' => 3, 'nombre' => 'manual.pdf', 'fecha' => '2024-03-14']
-    ],
-    'archivos_eliminados' => [],
-    'usuarios_activos' => $empleados,
-    'usuarios_pendientes' => [
-        ['id' => 99, 'nombre' => 'nuevo_usuario', 'password' => '...']
-    ],
-    'usuarios_inactivos' => []
+// Datos simulados (reemplazar con consultas reales cuando existan las tablas)
+$archivos = [
+    'subidos' => [],
+    'descargados' => [],
+    'eliminados' => []
+];
+
+$usuarios_estado = [
+    'activos' => $empleados,
+    'pendientes' => [],
+    'inactivos' => []
 ];
 ?>
 
@@ -85,111 +81,225 @@ $datos_simulados = [
             --header-bg: #2d2d2d;
         }
 
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            background: var(--background);
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background: var(--card-bg);
+            padding: 1rem;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .main-content {
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--header-bg);
+            color: white;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
         .detalles-panel {
             display: none;
-            margin-top: 1rem;
-            padding: 1rem;
+            margin-top: 2rem;
+            padding: 2rem;
             background: var(--card-bg);
-            border-radius: 8px;
+            border-radius: 10px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .tabla-detalles {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 1rem;
         }
 
         .tabla-detalles th, .tabla-detalles td {
-            padding: 12px;
+            padding: 1rem;
             border-bottom: 1px solid #ddd;
             text-align: left;
-        }
-
-        .detalles-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .cerrar-detalles {
-            cursor: pointer;
-            padding: 5px 10px;
-            background: var(--primary);
-            color: white;
-            border-radius: 5px;
         }
     </style>
 </head>
 <body data-theme="light">
-    <!-- Mantener el mismo header y sidebar del código anterior -->
+    <?php if(isset($_SESSION['username'])): ?>
+        <div class="dashboard-container">
+            <div class="sidebar">
+                <h2>Menú</h2>
+                <nav>
+                    <div class="stat-card" onclick="mostrarSeccion('panel-control')">
+                        <i class="fas fa-tachometer-alt"></i> Panel de Control
+                    </div>
+                    <div class="stat-card" onclick="mostrarSeccion('centro-ayuda')">
+                        <i class="fas fa-life-ring"></i> Centro de Ayuda
+                    </div>
+                </nav>
+            </div>
 
-    <div class="stats-grid">
-        <!-- Tarjetas principales -->
-        <div class="stat-card" onclick="mostrarDetalles('archivos_subidos')">
-            <h3><i class="fas fa-upload"></i> Archivos Subidos</h3>
-            <p><?= count($datos_simulados['archivos_subidos']) ?></p>
+            <div class="main-content">
+                <div class="header">
+                    <button class="theme-toggle" onclick="toggleTheme()">
+                        <i class="fas fa-moon"></i> Modo Oscuro
+                    </button>
+                    <h1>Bienvenido, <?= htmlspecialchars($_SESSION['username']) ?></h1>
+                    <a href="?logout=1" style="color: white; text-decoration: none;">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </a>
+                </div>
+
+                <div id="panel-control">
+                    <div class="stats-grid">
+                        <!-- Primera fila -->
+                        <div class="stat-card" onclick="mostrarDetalles('archivos-subidos')">
+                            <h3><i class="fas fa-upload"></i> Archivos Subidos</h3>
+                            <p><?= count($archivos['subidos']) ?></p>
+                        </div>
+                        <div class="stat-card" onclick="mostrarDetalles('archivos-descargados')">
+                            <h3><i class="fas fa-download"></i> Descargados</h3>
+                            <p><?= count($archivos['descargados']) ?></p>
+                        </div>
+                        <div class="stat-card" onclick="mostrarDetalles('archivos-eliminados')">
+                            <h3><i class="fas fa-trash"></i> Eliminados</h3>
+                            <p><?= count($archivos['eliminados']) ?></p>
+                        </div>
+
+                        <!-- Segunda fila -->
+                        <div class="stat-card" onclick="mostrarDetalles('usuarios-activos')">
+                            <h3><i class="fas fa-user-check"></i> Activos</h3>
+                            <p><?= count($usuarios_estado['activos']) ?></p>
+                        </div>
+                        <div class="stat-card" onclick="mostrarDetalles('usuarios-pendientes')">
+                            <h3><i class="fas fa-user-clock"></i> Pendientes</h3>
+                            <p><?= count($usuarios_estado['pendientes']) ?></p>
+                        </div>
+                        <div class="stat-card" onclick="mostrarDetalles('usuarios-inactivos')">
+                            <h3><i class="fas fa-user-slash"></i> Inactivos</h3>
+                            <p><?= count($usuarios_estado['inactivos']) ?></p>
+                        </div>
+                    </div>
+
+                    <!-- Paneles de detalles -->
+                    <div id="detalles-container"></div>
+                </div>
+
+                <div id="centro-ayuda" style="display: none;">
+                    <!-- Contenido del centro de ayuda -->
+                </div>
+            </div>
         </div>
-
-        <div class="stat-card" onclick="mostrarDetalles('usuarios_activos')">
-            <h3><i class="fas fa-user-check"></i> Usuarios Activos</h3>
-            <p><?= count($datos_simulados['usuarios_activos']) ?></p>
+    <?php else: ?>
+        <div style="max-width: 400px; margin: 5rem auto; padding: 2rem;">
+            <div class="stat-card">
+                <h2>Iniciar Sesión</h2>
+                <?php if(isset($error)): ?>
+                    <div style="color: red;"><?= $error ?></div>
+                <?php endif; ?>
+                <form method="POST">
+                    <input type="text" name="nombre" placeholder="Usuario" required>
+                    <input type="password" name="password" placeholder="Contraseña" required>
+                    <button type="submit">Ingresar</button>
+                </form>
+            </div>
         </div>
-
-        <!-- Resto de tarjetas... -->
-    </div>
-
-    <!-- Contenedor para detalles -->
-    <div id="detalles-container"></div>
+    <?php endif; ?>
 
     <script>
+        function toggleTheme() {
+            const body = document.body;
+            const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        function mostrarSeccion(seccion) {
+            document.querySelectorAll('.main-content > div').forEach(div => {
+                div.style.display = 'none';
+            });
+            document.getElementById(seccion).style.display = 'block';
+        }
+
         function mostrarDetalles(tipo) {
             const contenedor = document.getElementById('detalles-container');
-            const datos = <?= json_encode($datos_simulados) ?>[tipo];
-            
             let html = `
                 <div class="detalles-panel">
-                    <div class="detalles-header">
-                        <h3>${tipo.replace(/_/g, ' ').toUpperCase()}</h3>
-                        <div class="cerrar-detalles" onclick="cerrarDetalles()">&times; Cerrar</div>
-                    </div>
+                    <h3>Detalles de ${tipo.replace('-', ' ').toUpperCase()}</h3>
                     <table class="tabla-detalles">
                         <thead>
                             <tr>
-                                ${generarEncabezados(tipo)}
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Usuario</th>
+                                <th>Email</th>
+                                <th>Departamento</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${generarFilas(datos, tipo)}
+                            ${generarFilas(tipo)}
                         </tbody>
                     </table>
                 </div>
             `;
-
             contenedor.innerHTML = html;
-            contenedor.style.display = 'block';
         }
 
-        function generarEncabezados(tipo) {
-            if (tipo.includes('archivos')) {
-                return '<th>ID</th><th>Nombre</th><th>Fecha</th>';
-            }
-            return '<th>ID</th><th>Nombre</th><th>Usuario</th>';
-        }
+        function generarFilas(tipo) {
+            // Simular datos - reemplazar con datos reales de la base de datos
+            const datos = {
+                'usuarios-activos': <?= json_encode($usuarios_estado['activos']) ?>,
+                'usuarios-pendientes': <?= json_encode($usuarios_estado['pendientes']) ?>,
+                'usuarios-inactivos': <?= json_encode($usuarios_estado['inactivos']) ?>
+            }[tipo] || [];
 
-        function generarFilas(datos, tipo) {
             return datos.map(item => `
                 <tr>
-                    <td>${item.id}</td>
-                    <td>${item.nombre}</td>
-                    ${tipo.includes('archivos') ? `<td>${item.fecha || ''}</td>` : `<td>${item.password ? '***' : ''}</td>`}
+                    <td>${item.id || ''}</td>
+                    <td>${item.nombre || ''}</td>
+                    <td>${item.user || ''}</td>
+                    <td>${item.mail || ''}</td>
+                    <td>${item.dpt || ''}</td>
                 </tr>
             `).join('');
         }
 
-        function cerrarDetalles() {
-            document.getElementById('detalles-container').style.display = 'none';
-        }
+        // Cargar tema guardado
+        document.body.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
     </script>
 </body>
 </html>
