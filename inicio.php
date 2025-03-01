@@ -277,6 +277,7 @@ if (isset($_POST['logout'])) {
         </div>
     </div>
 
+    
     <script>
         function toggleDarkMode() {
             const body = document.body;
