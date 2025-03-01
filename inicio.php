@@ -15,11 +15,6 @@ try {
     die("Error de conexión: " . $e->getMessage());
 }
 
-// Inicializar variables
-$error = "";
-$stats = [];
-$detalles = [];
-
 // Proceso de login
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     $nombre = trim($_POST['nombre']);
@@ -33,9 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     if ($usuario && hash('sha256', $input_pass) === $usuario['password']) {
         $_SESSION['user_id'] = $usuario['id'];
         $_SESSION['username'] = $usuario['nombre'];
-        $_SESSION['es_admin'] = (bool)($usuario['es_admin'] ?? 0);
-        header("Location: inici.php");
-        exit();
+        // Verificar si es admin (usar nombre de usuario como criterio temporal)
+        $_SESSION['es_admin'] = ($usuario['nombre'] === 'admin');
     } else {
         $error = "Credenciales incorrectas";
     }
@@ -49,6 +43,7 @@ if (isset($_GET['logout'])) {
 }
 
 // Obtener datos para admin
+$stats = $detalles = [];
 if (isset($_SESSION['es_admin']) && $_SESSION['es_admin']) {
     // Estadísticas
     $stats = [
@@ -174,10 +169,10 @@ if (isset($_SESSION['es_admin']) && $_SESSION['es_admin']) {
                 </div>
                 <?php if($_SESSION['es_admin']): ?>
                     <div class="stat-card" onclick="showDetail('archivos')">
-                        <i class="fas fa-folder"></i> Archivos
+                        <i class="fas fa-folder"></i> Gestión de Archivos
                     </div>
                     <div class="stat-card" onclick="showDetail('empleados')">
-                        <i class="fas fa-users"></i> Empleados
+                        <i class="fas fa-users"></i> Gestión de Empleados
                     </div>
                 <?php endif; ?>
             </div>
@@ -185,16 +180,17 @@ if (isset($_SESSION['es_admin']) && $_SESSION['es_admin']) {
             <!-- Main Content -->
             <div class="main-content">
                 <!-- Header -->
-                <div class="header-bar">
-                    <button onclick="toggleTheme()">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding: 1rem; background: var(--header-bg); color: white; border-radius: 8px;">
+                    <button onclick="toggleTheme()" style="background: none; border: none; color: inherit; cursor: pointer;">
                         <i class="fas fa-moon"></i> Tema
                     </button>
                     <h1>Bienvenido, <?= htmlspecialchars($_SESSION['username']) ?></h1>
-                    <a href="?logout=1">
+                    <a href="?logout=1" style="color: white; text-decoration: none;">
                         <i class="fas fa-sign-out-alt"></i> Salir
                     </a>
                 </div>
 
+                <!-- Contenido Dinámico -->
                 <?php if($_SESSION['es_admin']): ?>
                     <!-- Panel Admin -->
                     <div class="stats-grid">
@@ -247,7 +243,6 @@ if (isset($_SESSION['es_admin']) && $_SESSION['es_admin']) {
                                 <tr>
                                     <th>ID</th>
                                     <th>Nombre</th>
-                                    <th>Administrador</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -255,7 +250,6 @@ if (isset($_SESSION['es_admin']) && $_SESSION['es_admin']) {
                                 <tr>
                                     <td><?= $emp['id'] ?></td>
                                     <td><?= htmlspecialchars($emp['nombre']) ?></td>
-                                    <td><?= $emp['es_admin'] ? 'Sí' : 'No' ?></td>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -274,14 +268,17 @@ if (isset($_SESSION['es_admin']) && $_SESSION['es_admin']) {
     <?php else: ?>
         <!-- Formulario Login -->
         <div class="login-box">
-            <h2><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</h2>
-            <?php if(!empty($error)): ?>
-                <div class="error-message"><?= $error ?></div>
+            <h2 style="text-align: center;"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</h2>
+            <?php if(isset($error)): ?>
+                <div style="color: red; margin: 1rem 0;"><?= $error ?></div>
             <?php endif; ?>
             <form method="POST">
-                <input type="text" name="nombre" placeholder="Usuario" required>
-                <input type="password" name="password" placeholder="Contraseña" required>
-                <button type="submit">
+                <input type="text" name="nombre" placeholder="Usuario" required
+                    style="width: 100%; padding: 0.8rem; margin: 0.5rem 0; border: 1px solid #ddd; border-radius: 5px;">
+                <input type="password" name="password" placeholder="Contraseña" required
+                    style="width: 100%; padding: 0.8rem; margin: 0.5rem 0; border: 1px solid #ddd; border-radius: 5px;">
+                <button type="submit"
+                    style="width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer;">
                     <i class="fas fa-unlock"></i> Ingresar
                 </button>
             </form>
