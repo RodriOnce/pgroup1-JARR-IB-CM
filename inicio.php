@@ -7,12 +7,18 @@ $username = "root";
 $password = "";
 $dbname = "empresa";
 
+// Conexión a la base de datos
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch(PDOException $e) {
     die("Error de conexión: " . $e->getMessage());
 }
+
+// Inicializar variables
+$error = "";
+$stats = [];
+$detalles = [];
 
 // Proceso de login
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
@@ -25,7 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     $usuario = $stmt->fetch();
 
     if ($usuario && hash('sha256', $input_pass) === $usuario['password']) {
+        $_SESSION['user_id'] = $usuario['id'];
         $_SESSION['username'] = $usuario['nombre'];
+        $_SESSION['es_admin'] = (bool)($usuario['es_admin'] ?? 0);
         header("Location: inici.php");
         exit();
     } else {
@@ -40,21 +48,22 @@ if (isset($_GET['logout'])) {
     exit();
 }
 
-// Obtener datos
-$empleados = $conn->query("SELECT * FROM empleados")->fetchAll(PDO::FETCH_ASSOC);
+// Obtener datos para admin
+if (isset($_SESSION['es_admin']) && $_SESSION['es_admin']) {
+    // Estadísticas
+    $stats = [
+        'uploads' => $conn->query("SELECT COUNT(*) FROM archivos WHERE tipo = 'subido'")->fetchColumn(),
+        'downloads' => $conn->query("SELECT COUNT(*) FROM archivos WHERE tipo = 'descargado'")->fetchColumn(),
+        'deleted' => $conn->query("SELECT COUNT(*) FROM archivos WHERE eliminado = 1")->fetchColumn(),
+        'empleados' => $conn->query("SELECT COUNT(*) FROM empleados")->fetchColumn()
+    ];
 
-// Datos simulados (reemplazar con consultas reales cuando existan las tablas)
-$archivos = [
-    'subidos' => [],
-    'descargados' => [],
-    'eliminados' => []
-];
-
-$usuarios_estado = [
-    'activos' => $empleados,
-    'pendientes' => [],
-    'inactivos' => []
-];
+    // Detalles
+    $detalles = [
+        'archivos' => $conn->query("SELECT * FROM archivos")->fetchAll(),
+        'empleados' => $conn->query("SELECT * FROM empleados")->fetchAll()
+    ];
+}
 ?>
 
 <!DOCTYPE html>
@@ -62,7 +71,7 @@ $usuarios_estado = [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Control</title>
+    <title>Gestor de Empresa</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -86,10 +95,10 @@ $usuarios_estado = [
             margin: 0;
             background: var(--background);
             color: var(--text);
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
 
-        .dashboard-container {
+        .dashboard {
             display: grid;
             grid-template-columns: 250px 1fr;
             min-height: 100vh;
@@ -98,204 +107,202 @@ $usuarios_estado = [
         .sidebar {
             background: var(--card-bg);
             padding: 1rem;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            border-right: 1px solid #ddd;
         }
 
         .main-content {
             padding: 2rem;
         }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            background: var(--header-bg);
-            color: white;
-            margin-bottom: 2rem;
-            border-radius: 8px;
-        }
-
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
         }
 
         .stat-card {
             background: var(--card-bg);
             padding: 1.5rem;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
             cursor: pointer;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .stat-card:hover {
             transform: translateY(-3px);
         }
 
-        .detalles-panel {
-            display: none;
-            margin-top: 2rem;
-            padding: 2rem;
+        .detail-panel {
             background: var(--card-bg);
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 2rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            display: none;
         }
 
-        .tabla-detalles {
+        table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 1rem;
         }
 
-        .tabla-detalles th, .tabla-detalles td {
+        th, td {
             padding: 1rem;
             border-bottom: 1px solid #ddd;
             text-align: left;
+        }
+
+        .login-box {
+            max-width: 400px;
+            margin: 5rem auto;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body data-theme="light">
     <?php if(isset($_SESSION['username'])): ?>
-        <div class="dashboard-container">
+        <div class="dashboard">
+            <!-- Sidebar -->
             <div class="sidebar">
-                <h2>Menú</h2>
-                <nav>
-                    <div class="stat-card" onclick="mostrarSeccion('panel-control')">
-                        <i class="fas fa-tachometer-alt"></i> Panel de Control
+                <h2>Menú Principal</h2>
+                <div class="stat-card" onclick="showDetail('inicio')">
+                    <i class="fas fa-home"></i> Inicio
+                </div>
+                <?php if($_SESSION['es_admin']): ?>
+                    <div class="stat-card" onclick="showDetail('archivos')">
+                        <i class="fas fa-folder"></i> Archivos
                     </div>
-                    <div class="stat-card" onclick="mostrarSeccion('centro-ayuda')">
-                        <i class="fas fa-life-ring"></i> Centro de Ayuda
+                    <div class="stat-card" onclick="showDetail('empleados')">
+                        <i class="fas fa-users"></i> Empleados
                     </div>
-                </nav>
+                <?php endif; ?>
             </div>
 
+            <!-- Main Content -->
             <div class="main-content">
-                <div class="header">
-                    <button class="theme-toggle" onclick="toggleTheme()">
-                        <i class="fas fa-moon"></i> Modo Oscuro
+                <!-- Header -->
+                <div class="header-bar">
+                    <button onclick="toggleTheme()">
+                        <i class="fas fa-moon"></i> Tema
                     </button>
                     <h1>Bienvenido, <?= htmlspecialchars($_SESSION['username']) ?></h1>
-                    <a href="?logout=1" style="color: white; text-decoration: none;">
-                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    <a href="?logout=1">
+                        <i class="fas fa-sign-out-alt"></i> Salir
                     </a>
                 </div>
 
-                <div id="panel-control">
+                <?php if($_SESSION['es_admin']): ?>
+                    <!-- Panel Admin -->
                     <div class="stats-grid">
-                        <!-- Primera fila -->
-                        <div class="stat-card" onclick="mostrarDetalles('archivos-subidos')">
-                            <h3><i class="fas fa-upload"></i> Archivos Subidos</h3>
-                            <p><?= count($archivos['subidos']) ?></p>
+                        <div class="stat-card" onclick="showDetail('subidos')">
+                            <h3><i class="fas fa-upload"></i> Subidos</h3>
+                            <p><?= $stats['uploads'] ?? 0 ?></p>
                         </div>
-                        <div class="stat-card" onclick="mostrarDetalles('archivos-descargados')">
-                            <h3><i class="fas fa-download"></i> Descargados</h3>
-                            <p><?= count($archivos['descargados']) ?></p>
+                        
+                        <div class="stat-card" onclick="showDetail('descargas')">
+                            <h3><i class="fas fa-download"></i> Descargas</h3>
+                            <p><?= $stats['downloads'] ?? 0 ?></p>
                         </div>
-                        <div class="stat-card" onclick="mostrarDetalles('archivos-eliminados')">
-                            <h3><i class="fas fa-trash"></i> Eliminados</h3>
-                            <p><?= count($archivos['eliminados']) ?></p>
-                        </div>
-
-                        <!-- Segunda fila -->
-                        <div class="stat-card" onclick="mostrarDetalles('usuarios-activos')">
-                            <h3><i class="fas fa-user-check"></i> Activos</h3>
-                            <p><?= count($usuarios_estado['activos']) ?></p>
-                        </div>
-                        <div class="stat-card" onclick="mostrarDetalles('usuarios-pendientes')">
-                            <h3><i class="fas fa-user-clock"></i> Pendientes</h3>
-                            <p><?= count($usuarios_estado['pendientes']) ?></p>
-                        </div>
-                        <div class="stat-card" onclick="mostrarDetalles('usuarios-inactivos')">
-                            <h3><i class="fas fa-user-slash"></i> Inactivos</h3>
-                            <p><?= count($usuarios_estado['inactivos']) ?></p>
+                        
+                        <div class="stat-card" onclick="showDetail('empleados')">
+                            <h3><i class="fas fa-users"></i> Empleados</h3>
+                            <p><?= $stats['empleados'] ?? 0 ?></p>
                         </div>
                     </div>
 
-                    <!-- Paneles de detalles -->
-                    <div id="detalles-container"></div>
-                </div>
+                    <!-- Detalles Archivos -->
+                    <div class="detail-panel" id="subidos-detail">
+                        <h3>Archivos Subidos</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($detalles['archivos'] as $archivo): ?>
+                                    <?php if($archivo['tipo'] === 'subido'): ?>
+                                    <tr>
+                                        <td><?= $archivo['id'] ?></td>
+                                        <td><?= htmlspecialchars($archivo['nombre_archivo']) ?></td>
+                                        <td><?= $archivo['fecha'] ?></td>
+                                    </tr>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
 
-                <div id="centro-ayuda" style="display: none;">
-                    <!-- Contenido del centro de ayuda -->
-                </div>
+                    <!-- Detalles Empleados -->
+                    <div class="detail-panel" id="empleados-detail">
+                        <h3>Listado de Empleados</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Administrador</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($detalles['empleados'] as $emp): ?>
+                                <tr>
+                                    <td><?= $emp['id'] ?></td>
+                                    <td><?= htmlspecialchars($emp['nombre']) ?></td>
+                                    <td><?= $emp['es_admin'] ? 'Sí' : 'No' ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+
+                <?php else: ?>
+                    <!-- Panel Usuario Normal -->
+                    <div class="stat-card">
+                        <h3><i class="fas fa-user"></i> Panel de Usuario</h3>
+                        <p>Bienvenido al sistema de gestión interno</p>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     <?php else: ?>
-        <div style="max-width: 400px; margin: 5rem auto; padding: 2rem;">
-            <div class="stat-card">
-                <h2>Iniciar Sesión</h2>
-                <?php if(isset($error)): ?>
-                    <div style="color: red;"><?= $error ?></div>
-                <?php endif; ?>
-                <form method="POST">
-                    <input type="text" name="nombre" placeholder="Usuario" required>
-                    <input type="password" name="password" placeholder="Contraseña" required>
-                    <button type="submit">Ingresar</button>
-                </form>
-            </div>
+        <!-- Formulario Login -->
+        <div class="login-box">
+            <h2><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</h2>
+            <?php if(!empty($error)): ?>
+                <div class="error-message"><?= $error ?></div>
+            <?php endif; ?>
+            <form method="POST">
+                <input type="text" name="nombre" placeholder="Usuario" required>
+                <input type="password" name="password" placeholder="Contraseña" required>
+                <button type="submit">
+                    <i class="fas fa-unlock"></i> Ingresar
+                </button>
+            </form>
         </div>
     <?php endif; ?>
 
     <script>
+        // Funcionalidades JavaScript
+        function showDetail(tipo) {
+            document.querySelectorAll('.detail-panel').forEach(panel => {
+                panel.style.display = 'none';
+            });
+            const panel = document.getElementById(`${tipo}-detail`);
+            if(panel) panel.style.display = 'block';
+        }
+
         function toggleTheme() {
             const body = document.body;
             const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
             body.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
-        }
-
-        function mostrarSeccion(seccion) {
-            document.querySelectorAll('.main-content > div').forEach(div => {
-                div.style.display = 'none';
-            });
-            document.getElementById(seccion).style.display = 'block';
-        }
-
-        function mostrarDetalles(tipo) {
-            const contenedor = document.getElementById('detalles-container');
-            let html = `
-                <div class="detalles-panel">
-                    <h3>Detalles de ${tipo.replace('-', ' ').toUpperCase()}</h3>
-                    <table class="tabla-detalles">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Usuario</th>
-                                <th>Email</th>
-                                <th>Departamento</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${generarFilas(tipo)}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-            contenedor.innerHTML = html;
-        }
-
-        function generarFilas(tipo) {
-            // Simular datos - reemplazar con datos reales de la base de datos
-            const datos = {
-                'usuarios-activos': <?= json_encode($usuarios_estado['activos']) ?>,
-                'usuarios-pendientes': <?= json_encode($usuarios_estado['pendientes']) ?>,
-                'usuarios-inactivos': <?= json_encode($usuarios_estado['inactivos']) ?>
-            }[tipo] || [];
-
-            return datos.map(item => `
-                <tr>
-                    <td>${item.id || ''}</td>
-                    <td>${item.nombre || ''}</td>
-                    <td>${item.user || ''}</td>
-                    <td>${item.mail || ''}</td>
-                    <td>${item.dpt || ''}</td>
-                </tr>
-            `).join('');
         }
 
         // Cargar tema guardado
