@@ -1,35 +1,39 @@
 <?php
 session_start();
 
-// Configuración de la base de datos
+// Configuración de la base de datos (ajusta estos valores)
 $servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "empresa";
+$username = "root";     // Usuario por defecto en XAMPP/MAMP
+$password = "";         // Contraseña vacía por defecto
+$dbname = "empresa";    // Nombre de tu base de datos
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch(PDOException $e) {
-    die("Error de conexión: " . $e->getMessage());
+    die("Error de conexión: Verifica tus credenciales de MySQL. Detalle: " . $e->getMessage());
 }
 
-// Verificar login
+// Proceso de login
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
-    $nombre = $_POST['nombre'];
-    $input_pass = $_POST['password'];
-    
-    $stmt = $conn->prepare("SELECT * FROM empleados WHERE nombre = :nombre");
-    $stmt->bindParam(':nombre', $nombre);
-    $stmt->execute();
-    $usuario = $stmt->fetch();
-    
-    if ($usuario && hash('sha256', $input_pass) === $usuario['password']) {
-        $_SESSION['username'] = $usuario['nombre'];
-        header("Location: inici.php");
-        exit();
-    } else {
-        $error = "Credenciales incorrectas";
+    $nombre = trim($_POST['nombre']);
+    $input_pass = trim($_POST['password']);
+
+    try {
+        $stmt = $conn->prepare("SELECT * FROM empleados WHERE nombre = :nombre");
+        $stmt->bindParam(':nombre', $nombre);
+        $stmt->execute();
+        $usuario = $stmt->fetch();
+
+        if ($usuario && hash('sha256', $input_pass) === $usuario['password']) {
+            $_SESSION['username'] = $usuario['nombre'];
+            header("Location: inici.php");
+            exit();
+        } else {
+            $error = "Credenciales incorrectas";
+        }
+    } catch(PDOException $e) {
+        $error = "Error al verificar credenciales";
     }
 }
 
@@ -40,171 +44,141 @@ if (isset($_GET['logout'])) {
     exit();
 }
 
-// Obtener estadísticas reales
-$stats = [
-    'total_empleados' => $conn->query("SELECT COUNT(*) FROM empleados")->fetchColumn(),
-    'activos' => $conn->query("SELECT COUNT(*) FROM empleados")->fetchColumn(), // Modificar según tu lógica
-    'pendientes' => 0, // Agregar campo en la tabla si es necesario
-    'inactivos' => 0  // Agregar campo en la tabla si es necesario
-];
-
-// Datos para el gráfico (ejemplo)
-$chart_data = $conn->query("
-    SELECT DATE(created_at) as fecha, COUNT(*) as total 
-    FROM empleados 
-    GROUP BY DATE(created_at)
-")->fetchAll(PDO::FETCH_ASSOC);
+// Obtener lista de empleados
+$empleados = [];
+if (isset($_SESSION['username'])) {
+    try {
+        $stmt = $conn->query("SELECT id, nombre FROM empleados");
+        $empleados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch(PDOException $e) {
+        die("Error al obtener empleados: " . $e->getMessage());
+    }
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Employee Dashboard - <?= htmlspecialchars($_SESSION['username'] ?? '') ?></title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Empleados</title>
     <style>
-        /* Mantener todos los estilos del dashboard anterior */
         :root {
-            --primary-color: #6f42c1;
-            --secondary-color: #ff6b6b;
-            --success-color: #4CAF50;
-            --background-color: #f9f3f8;
-            --text-color: #333;
-            --card-background: #ffffff;
-            --header-background: var(--primary-color);
-            --sidebar-width: 280px;
-            --transition-speed: 0.3s;
+            --primary: #6f42c1;
+            --background: #f8f9fa;
+            --text: #212529;
+            --card-bg: #ffffff;
         }
 
-        [data-theme="dark"] {
-            --background-color: #121212;
-            --text-color: #ffffff;
-            --card-background: #1e1e1e;
-            --header-background: #2d2d2d;
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            background: var(--background);
+            color: var(--text);
         }
 
-        /* ... (Mantener todo el CSS original) ... */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .login-box {
+            max-width: 400px;
+            margin: 5rem auto;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
+        .empleados-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .empleado-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .empleado-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border-radius: 10px;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .error {
+            color: #dc3545;
+            margin: 1rem 0;
+        }
     </style>
 </head>
-<body data-theme="light">
+<body>
     <?php if(isset($_SESSION['username'])): ?>
-        <div class="sidebar animated">
-            <h2 style="text-align: center; margin-bottom: 2rem;">
-                <i class="fas fa-users"></i> Gestión Empleados
-            </h2>
-            <nav>
-                <ul style="list-style: none; padding: 0;">
-                    <li class="smart-card" onclick="showSection('control-panel')">
-                        <i class="fas fa-tachometer-alt"></i> Dashboard
-                    </li>
-                    <li class="smart-card" onclick="showSection('empleados')">
-                        <i class="fas fa-list"></i> Lista de Empleados
-                    </li>
-                    <li class="smart-card" onclick="showSection('ayuda')">
-                        <i class="fas fa-question-circle"></i> Ayuda
-                    </li>
-                </ul>
-            </nav>
-        </div>
-
-        <div class="main-content">
-            <div class="smart-header animated">
-                <button class="menu-toggle" onclick="toggleSidebar()">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="header-actions">
-                    <h1>Bienvenido, <?= htmlspecialchars($_SESSION['username']) ?></h1>
-                    <button class="theme-toggle" onclick="toggleTheme()">
-                        <i class="fas fa-moon"></i>
-                    </button>
-                    <a href="?logout=1" class="logout-button">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </a>
-                </div>
+        <div class="container">
+            <div class="header">
+                <h1>Bienvenido, <?= htmlspecialchars($_SESSION['username']) ?></h1>
+                <a href="?logout=1" style="color: white; text-decoration: none;">Cerrar Sesión</a>
             </div>
 
-            <!-- Sección Principal -->
-            <div id="control-panel" class="dashboard-section active">
-                <div class="dashboard-grid">
-                    <?php foreach ($stats as $key => $value): ?>
-                    <div class="smart-card animated">
-                        <h3><?= ucfirst(str_replace('_', ' ', $key)) ?></h3>
-                        <div class="stat-value"><?= $value ?></div>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-
-                <div class="chart-container animated">
-                    <canvas id="empleadosChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Sección Empleados -->
-            <div id="empleados" class="dashboard-section">
-                <div class="dashboard-grid">
-                    <?php 
-                    $empleados = $conn->query("SELECT * FROM empleados")->fetchAll();
-                    foreach ($empleados as $empleado): ?>
-                    <div class="smart-card">
+            <h2>Lista de Empleados</h2>
+            <div class="empleados-grid">
+                <?php foreach ($empleados as $empleado): ?>
+                    <div class="empleado-card">
                         <h3><?= htmlspecialchars($empleado['nombre']) ?></h3>
-                        <p>ID: <?= $empleado['id'] ?></p>
+                        <p>ID: <?= htmlspecialchars($empleado['id']) ?></p>
                     </div>
-                    <?php endforeach; ?>
-                </div>
+                <?php endforeach; ?>
             </div>
         </div>
-
-        <script>
-            // Gráfico de empleados
-            new Chart(document.getElementById('empleadosChart').getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: <?= json_encode(array_column($chart_data, 'fecha')) ?>,
-                    datasets: [{
-                        label: 'Registro de Empleados',
-                        data: <?= json_encode(array_column($chart_data, 'total')) ?>,
-                        borderColor: '#6f42c1',
-                        tension: 0.4
-                    }]
-                }
-            });
-
-            // Mantener funciones JavaScript originales
-            function toggleSidebar() {
-                document.querySelector('.sidebar').classList.toggle('collapsed');
-                document.querySelector('.main-content').classList.toggle('expanded');
-            }
-
-            function toggleTheme() {
-                const body = document.body;
-                const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-                body.setAttribute('data-theme', newTheme);
-                localStorage.setItem('theme', newTheme);
-            }
-
-            function showSection(sectionId) {
-                document.querySelectorAll('.dashboard-section').forEach(section => {
-                    section.style.display = 'none';
-                });
-                document.getElementById(sectionId).style.display = 'block';
-            }
-        </script>
     <?php else: ?>
-        <!-- Login Form -->
-        <div class="login-container">
-            <div class="smart-card" style="max-width: 400px; margin: 5rem auto;">
-                <h2 style="text-align: center;"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</h2>
+        <div class="container">
+            <div class="login-box">
+                <h1 style="text-align: center; margin-bottom: 2rem;">Iniciar Sesión</h1>
                 <?php if(isset($error)): ?>
-                    <div class="error-message"><?= $error ?></div>
+                    <div class="error"><?= $error ?></div>
                 <?php endif; ?>
                 <form method="POST">
-                    <input type="text" name="nombre" placeholder="Usuario" required>
+                    <input type="text" name="nombre" placeholder="Nombre de usuario" required>
                     <input type="password" name="password" placeholder="Contraseña" required>
-                    <button type="submit" name="login" class="smart-card">
-                        <i class="fas fa-unlock"></i> Acceder
-                    </button>
+                    <button type="submit" name="login">Ingresar</button>
                 </form>
             </div>
         </div>
