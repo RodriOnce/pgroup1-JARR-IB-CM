@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
 
     if ($usuario && hash('sha256', $input_pass) === $usuario['password']) {
         $_SESSION['username'] = $usuario['nombre'];
-        header("Location: inici.php");
+        header("Location: inicio.php");
         exit();
     } else {
         $error = "Credenciales incorrectas";
@@ -36,21 +36,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
 // Cerrar sesión
 if (isset($_GET['logout'])) {
     session_destroy();
-    header("Location: inici.php");
+    header("Location: inicio.php");
     exit();
 }
 
-// Obtener datos
+// Obtener archivos subidos por el usuario actual
+$archivos_subidos = [];
+if (isset($_SESSION['username'])) {
+    $stmt = $conn->prepare("SELECT id, filename, upload_date FROM archivos WHERE scan_user = :username");
+    $stmt->bindParam(':username', $_SESSION['username']);
+    $stmt->execute();
+    $archivos_subidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// Obtener datos de usuarios
 $usuarios_activos = $conn->query("SELECT * FROM empleados")->fetchAll(PDO::FETCH_ASSOC);
 $usuarios_pendientes = [];
 $usuarios_inactivos = [];
-
-// Datos simulados
-$archivos = [
-    'subidos' => [],
-    'descargados' => [],
-    'eliminados' => []
-];
 ?>
 
 <!DOCTYPE html>
@@ -174,6 +176,31 @@ $archivos = [
             padding: 1rem;
             border-bottom: 1px solid rgba(0,0,0,0.1);
         }
+
+        .btn-download, .btn-delete {
+            padding: 5px 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+            font-size: 0.9rem;
+            margin: 0 5px;
+        }
+
+        .btn-download {
+            background-color: var(--success);
+        }
+
+        .btn-delete {
+            background-color: var(--danger);
+        }
+
+        .btn-download:hover {
+            background-color: #218838;
+        }
+
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
     </style>
 </head>
 <body data-theme="light">
@@ -213,73 +240,41 @@ $archivos = [
                         <!-- Primera Fila -->
                         <div class="stat-card" onclick="toggleDetalles('subidos')">
                             <h3><i class="fas fa-upload"></i> Archivos Subidos</h3>
-                            <p style="font-size: 2.5rem; margin: 1rem 0;"><?= count($archivos['subidos']) ?></p>
+                            <p style="font-size: 2.5rem; margin: 1rem 0;"><?= count($archivos_subidos) ?></p>
                             <div class="detalles-panel" id="subidos">
                                 <table class="tabla-detalles">
                                     <thead>
-                                        <tr><th>ID</th><th>Nombre</th><th>Fecha</th></tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach($archivos['subidos'] as $archivo): ?>
-                                        <tr><td colspan="3">No hay archivos subidos</td></tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="stat-card" onclick="toggleDetalles('descargados')">
-                            <h3><i class="fas fa-download"></i> Descargados</h3>
-                            <p style="font-size: 2.5rem; margin: 1rem 0;"><?= count($archivos['descargados']) ?></p>
-                            <div class="detalles-panel" id="descargados">
-                                <!-- Contenido similar -->
-                            </div>
-                        </div>
-
-                        <div class="stat-card" onclick="toggleDetalles('eliminados')">
-                            <h3><i class="fas fa-trash"></i> Eliminados</h3>
-                            <p style="font-size: 2.5rem; margin: 1rem 0;"><?= count($archivos['eliminados']) ?></p>
-                            <div class="detalles-panel" id="eliminados">
-                                <!-- Contenido similar -->
-                            </div>
-                        </div>
-
-                        <!-- Segunda Fila -->
-                        <div class="stat-card" onclick="toggleDetalles('activos')">
-                            <h3><i class="fas fa-user-check"></i> Activos</h3>
-                            <p style="font-size: 2.5rem; margin: 1rem 0;"><?= count($usuarios_activos) ?></p>
-                            <div class="detalles-panel" id="activos">
-                                <table class="tabla-detalles">
-                                    <thead>
-                                        <tr><th>ID</th><th>Nombre</th></tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach($usuarios_activos as $usuario): ?>
                                         <tr>
-                                            <td><?= $usuario['id'] ?></td>
-                                            <td><?= htmlspecialchars($usuario['nombre']) ?></td>
+                                            <th>ID</th>
+                                            <th>Nombre</th>
+                                            <th>Fecha</th>
+                                            <th>Acciones</th>
                                         </tr>
-                                        <?php endforeach; ?>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (count($archivos_subidos) > 0): ?>
+                                            <?php foreach($archivos_subidos as $archivo): ?>
+                                                <tr>
+                                                    <td><?= $archivo['id'] ?></td>
+                                                    <td><?= htmlspecialchars($archivo['filename']) ?></td>
+                                                    <td><?= $archivo['upload_date'] ?></td>
+                                                    <td>
+                                                        <a href="download.php?id=<?= $archivo['id'] ?>" class="btn-download">Descargar</a>
+                                                        <a href="eliminar_archivos.php?id=<?= $archivo['id'] ?>" class="btn-delete">Eliminar</a>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <tr>
+                                                <td colspan="4">No hay archivos subidos</td>
+                                            </tr>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
 
-                        <div class="stat-card" onclick="toggleDetalles('pendientes')">
-                            <h3><i class="fas fa-user-clock"></i> Pendientes</h3>
-                            <p style="font-size: 2.5rem; margin: 1rem 0;"><?= count($usuarios_pendientes) ?></p>
-                            <div class="detalles-panel" id="pendientes">
-                                <!-- Contenido similar -->
-                            </div>
-                        </div>
-
-                        <div class="stat-card" onclick="toggleDetalles('inactivos')">
-                            <h3><i class="fas fa-user-slash"></i> Inactivos</h3>
-                            <p style="font-size: 2.5rem; margin: 1rem 0;"><?= count($usuarios_inactivos) ?></p>
-                            <div class="detalles-panel" id="inactivos">
-                                <!-- Contenido similar -->
-                            </div>
-                        </div>
+                        <!-- Otras secciones (descargados, eliminados, etc.) -->
                     </div>
                 </div>
             </div>
