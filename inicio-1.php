@@ -29,6 +29,58 @@ if (isset($_GET['delete'])) {
         exit();
     }
 }
+
+// Compartir un archivo si se ha solicitado
+if (isset($_POST['compartir'])) {
+    $archivo = $_POST['archivo'];  // Nombre del archivo a compartir
+    $usuario_destino = $_POST['usuario_destino'];  // Usuario con el que se comparte
+
+    // Ruta del archivo en la carpeta del usuario que comparte
+    $file_src = $userFolder . $archivo;
+
+    // Ruta de la carpeta del usuario destino
+    $carpeta_destino = $basePath . $usuario_destino . "/";
+
+    // Verificar si la carpeta del usuario destino existe
+    if (!is_dir($carpeta_destino)) {
+        mkdir($carpeta_destino, 0755, true);  // Crear la carpeta si no existe
+    }
+
+    // Copiar el archivo a la carpeta del usuario destino
+    if (copy($file_src, $carpeta_destino . $archivo)) {
+        // Registrar el archivo compartido en la base de datos
+        $conn = new mysqli("localhost", "root", "momo", "empresa");
+        if ($conn->connect_error) {
+            die("Conexión fallida: " . $conn->connect_error);
+        }
+
+        $sql = "INSERT INTO shared (file_src, user_src, user_dst) VALUES (?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sss", $file_src, $user, $usuario_destino);
+        $stmt->execute();
+        $stmt->close();
+        $conn->close();
+
+        echo "<p>Archivo compartido con éxito.</p>";
+    } else {
+        echo "<p>Error al compartir el archivo.</p>";
+    }
+}
+
+// Obtener la lista de usuarios disponibles para compartir
+$conn = new mysqli("localhost", "root", "momo", "empresa");
+if ($conn->connect_error) {
+    die("Conexión fallida: " . $conn->connect_error);
+}
+
+$sql = "SELECT user FROM empleados WHERE user != ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $user);
+$stmt->execute();
+$result = $stmt->get_result();
+$usuarios = $result->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -318,6 +370,7 @@ if (isset($_GET['delete'])) {
                                                 <a href='$fileUrl' target='_blank'>Abrir</a>
                                                 <a href='$fileUrl' download>Descargar</a>
                                                 <button onclick=\"window.location.href='inicio-1.php?delete=$file'\">Eliminar</button>
+                                                <button onclick=\"mostrarModal('$file')\">Compartir</button>
                                             </div>
                                           </li>";
                                 }
@@ -326,6 +379,24 @@ if (isset($_GET['delete'])) {
                         </ul>
                     </div>
                 </div>
+            </div>
+
+            <!-- Modal para compartir archivos -->
+            <div id="modalCompartir" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); z-index: 1000;">
+                <h3>Compartir archivo</h3>
+                <form method="POST">
+                    <input type="hidden" id="archivoCompartir" name="archivo">
+                    <label for="usuario_destino">Selecciona un usuario:</label>
+                    <select name="usuario_destino" id="usuario_destino" required>
+                        <?php
+                        foreach ($usuarios as $usuario) {
+                            echo "<option value='{$usuario['user']}'>{$usuario['user']}</option>";
+                        }
+                        ?>
+                    </select>
+                    <button type="submit" name="compartir">Compartir</button>
+                    <button type="button" onclick="cerrarModal()">Cancelar</button>
+                </form>
             </div>
 
             <div class="section">
@@ -360,6 +431,15 @@ if (isset($_GET['delete'])) {
             body.setAttribute('data-theme', newTheme);
             const toggleButton = document.querySelector('.dark-mode-toggle');
             toggleButton.textContent = newTheme === 'light' ? 'Modo Oscuro' : 'Modo Claro';
+        }
+
+        function mostrarModal(archivo) {
+            document.getElementById('archivoCompartir').value = archivo;
+            document.getElementById('modalCompartir').style.display = 'block';
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalCompartir').style.display = 'none';
         }
     </script>
 </body>
