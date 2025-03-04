@@ -6,6 +6,7 @@
     <meta name="description" content="Registro de usuario para la plataforma TrackZero">
     <title>Registro | TrackZero</title>
     <style>
+        /* Estilos CSS (igual que en tu código original) */
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 
         :root {
@@ -234,7 +235,6 @@
             left: 50%;
             animation-delay: 6s;
         }
-
     </style>
 
     <script>
@@ -245,53 +245,51 @@
             body.setAttribute('data-theme', newTheme);
         }
     </script>
-
 </head>
-
 
 <body data-theme="light">
 
     <?php
-
         $host = 'localhost';
         $dbname = 'empresa';
         $username = 'root';
-        $password = 'momo'; 
+        $password = 'momo';
 
         try {
             $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
+                $name = trim($_POST['name']);
                 $user = trim($_POST['username']);
+                $mail = trim($_POST['mail']);
                 $pass = trim($_POST['password']);
                 $confirm_pass = trim($_POST['confirm_password']);
+                $dpt = trim($_POST['dpt']);
 
-                if (empty($user) || empty($pass) || empty($confirm_pass)) {
-
+                if (empty($name) || empty($user) || empty($mail) || empty($pass) || empty($confirm_pass) || empty($dpt)) {
                     echo "<script>alert('Por favor, completa todos los campos.');</script>";
-
+                } elseif (!filter_var($mail, FILTER_VALIDATE_EMAIL)) {
+                    echo "<script>alert('El correo electrónico no es válido.');</script>";
                 } elseif ($pass !== $confirm_pass) {
-
                     echo "<script>alert('Las contraseñas no coinciden.');</script>";
-
                 } else {
-
                     $hashed_password = hash('sha256', $pass);
 
-                    $stmt = $conn->prepare("SELECT COUNT(*) FROM empleados WHERE nombre = :nombre");
-                    $stmt->bindParam(':nombre', $user);
+                    $stmt = $conn->prepare("SELECT COUNT(*) FROM empleados WHERE user = :user");
+                    $stmt->bindParam(':user', $user);
                     $stmt->execute();
                     $count = $stmt->fetchColumn();
 
                     if ($count > 0) {
-                        echo "<script>alert('El usuario ya existe. Por favor, elige otro nombre.');</script>";
+                        echo "<script>alert('El nombre de usuario ya existe. Por favor, elige otro.');</script>";
                     } else {
-
-                        $stmt = $conn->prepare("INSERT INTO empleados (nombre, password) VALUES (:nombre, :password)");
-                        $stmt->bindParam(':nombre', $user);
-                        $stmt->bindParam(':password', $hashed_password);
+                        $stmt = $conn->prepare("INSERT INTO empleados (name, user, mail, pass, dpt) VALUES (:name, :user, :mail, :pass, :dpt)");
+                        $stmt->bindParam(':name', $name);
+                        $stmt->bindParam(':user', $user);
+                        $stmt->bindParam(':mail', $mail);
+                        $stmt->bindParam(':pass', $hashed_password);
+                        $stmt->bindParam(':dpt', $dpt);
                         $stmt->execute();
 
                         echo "<script>alert('Registro exitoso. Ahora puedes iniciar sesión.'); window.location.href = 'login.html';</script>";
@@ -302,6 +300,7 @@
             echo "Error: " . $e->getMessage();
         }
     ?>
+
     <button class="theme-toggle" onclick="toggleTheme()"></button>
     <div class="dynamic-background">
         <div class="circle-1"></div>
@@ -313,8 +312,16 @@
         <h1>Registro</h1>
         <form method="POST">
             <div class="form-group">
+                <label for="name"><strong>Nombre Completo</strong></label>
+                <input type="text" id="name" name="name" placeholder="Ingrese su nombre completo" required>
+            </div>
+            <div class="form-group">
                 <label for="username"><strong>Nombre de Usuario</strong></label>
                 <input type="text" id="username" name="username" placeholder="Ingrese su nombre de usuario" required>
+            </div>
+            <div class="form-group">
+                <label for="mail"><strong>Correo Electrónico</strong></label>
+                <input type="email" id="mail" name="mail" placeholder="Ingrese su correo electrónico" required>
             </div>
             <div class="form-group">
                 <label for="password"><strong>Contraseña</strong></label>
@@ -323,6 +330,10 @@
             <div class="form-group">
                 <label for="confirm_password"><strong>Confirmar Contraseña</strong></label>
                 <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirme su contraseña" minlength="8" required>
+            </div>
+            <div class="form-group">
+                <label for="dpt"><strong>Departamento</strong></label>
+                <input type="text" id="dpt" name="dpt" placeholder="Ingrese su departamento" required>
             </div>
             <button type="submit" class="btn">Registrarse</button>
         </form>
