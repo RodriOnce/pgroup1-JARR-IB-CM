@@ -43,9 +43,15 @@ We used **Ubuntu Server 22.04 (Jellyfish)**.
    ```sql
    USE empresa;
    ```
+   ```
+   USE viruses;
+   ```
 7. Check the Table Structure (to verify the structure of the 'empleados' table):
    ```sql
    DESCRIBE empleados;
+   ```
+   ```
+   DESCRIBE archivos;
    ```
 8. Insert Data into the Table
    ```sql
@@ -54,17 +60,32 @@ We used **Ubuntu Server 22.04 (Jellyfish)**.
    ('Bob', 'bobm', SHA2('mypassword', 256), 'IT', 'bob@empresa.com', 'pendiente'),
    ('Charlie', 'charlie01', SHA2('testpass', 256), 'ADM', 'charlie@empresa.com', 'inactivo');
    ```
+   ```
+   INSERT INTO archivos (filename, hash, scan_date, scan_user, scan_state) VALUES
+   ('document.pdf', 'a5d3f4b6789c...', '2025-03-08', 'scanner01', 'clean'),
+   ('malware.exe', 'b7e6a1c9d2f8...', '2025-03-08', 'scanner02', 'infected'),
+   ('report.docx', 'c9f8e7d6a5b4...', '2025-03-08', 'scanner03', 'clean');
+   ```
 9. Verify the Insrted Data
     ```sql
     SELECT * FROM empleados;
+    ```
+    ```
+    SELECT * FROM archivos;
     ```
 10. Updating an Employee Record
     ```sql
     UPDATE empleados SET status = 'activo' WHERE user = 'bobm';
     ```
+    ```
+    UPDATE archivos SET scan_state = 'quarantined' WHERE filename = `malware.exe`
+    ```
 11. Deleting an Employee Record
     ```sql
     DELETE FROM empleados WHERE user = 'charlie01';
+    ```
+    ```
+    DELETE FROM archivos WHERE filename = 'report.docx'
     ```
 12. Exiting MariaDB
     ```sql
