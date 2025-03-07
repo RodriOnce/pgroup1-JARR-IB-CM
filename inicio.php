@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
 // Cerrar sesión
 if (isset($_GET['logout'])) {
     session_destroy();
-    header("Location: inici.php");
+    header("Location: index.php");
     exit();
 }
 
