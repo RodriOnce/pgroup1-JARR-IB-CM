@@ -1,11 +1,21 @@
 <?php
 session_start();
 
+// Manejar el cierre de sesión antes de cualquier verificación
+if (isset($_POST['logout'])) {
+    session_unset();
+    session_destroy();
+    header("Location: index.html");
+    exit();
+}
+
+// Verificar si el usuario está autenticado
 if (!isset($_SESSION['username'])) {
     header("Location: login.html");
     exit();
 }
 
+//Carpeta del usuario
 $user = $_SESSION['username'];
 $basePath = "/var/www/html/archivos/";
 $userFolder = $basePath . $user . "/";
@@ -32,40 +42,67 @@ if (isset($_GET['delete'])) {
 
 // Compartir un archivo si se ha solicitado
 if (isset($_POST['compartir'])) {
-    $archivo = $_POST['archivo'];  // Nombre del archivo a compartir
-    $usuario_destino = $_POST['usuario_destino'];  // Usuario con el que se comparte
+    $archivo = $_POST['archivo'];
+    $tipo_destino = $_POST['tipo_destino'];
+    $current_user = $user;
 
-    // Ruta del archivo en la carpeta del usuario que comparte
-    $file_src = $userFolder . $archivo;
+    $conn = new mysqli("localhost", "root", "momo", "empresa");
+    
+    if ($tipo_destino === 'departamento') {
+        $departamento = $_POST['departamento_destino'];
+        
+        // Obtener usuarios del departamento
+        $stmt = $conn->prepare("SELECT user FROM empleados 
+                              WHERE dpt = ? 
+                              AND status = 'activo' 
+                              AND user != ?");
+        $stmt->bind_param("ss", $departamento, $current_user);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        while ($row = $result->fetch_assoc()) {
+            $usuario_destino = $row['user'];
+            $file_src = $userFolder . $archivo;
+            $carpeta_destino = $basePath . $usuario_destino . "/";
 
-    // Ruta de la carpeta del usuario destino
-    $carpeta_destino = $basePath . $usuario_destino . "/";
+            if (!is_dir($carpeta_destino)) {
+                mkdir($carpeta_destino, 0755, true);
+            }
 
-    // Verificar si la carpeta del usuario destino existe
-    if (!is_dir($carpeta_destino)) {
-        mkdir($carpeta_destino, 0755, true);  // Crear la carpeta si no existe
-    }
+            if (copy($file_src, $carpeta_destino . $archivo)) {
+                // Insertar en tabla shared
+                $stmt_insert = $conn->prepare("INSERT INTO shared 
+                                            (file_src, user_src, user_dst) 
+                                            VALUES (?, ?, ?)");
+                $stmt_insert->bind_param("sss", $file_src, $current_user, $usuario_destino);
+                $stmt_insert->execute();
+            }
+        }
+    } else {
+        // Lógica original para usuario individual
+        $usuario_destino = $_POST['usuario_destino'];
+        $file_src = $userFolder . $archivo;
+        $carpeta_destino = $basePath . $usuario_destino . "/";
 
-    // Copiar el archivo a la carpeta del usuario destino
-    if (copy($file_src, $carpeta_destino . $archivo)) {
-        // Registrar el archivo compartido en la base de datos
-        $conn = new mysqli("localhost", "root", "momo", "empresa");
-        if ($conn->connect_error) {
-            die("Conexión fallida: " . $conn->connect_error);
+        if (!is_dir($carpeta_destino)) {
+            mkdir($carpeta_destino, 0755, true);
         }
 
-        $sql = "INSERT INTO shared (file_src, user_src, user_dst) VALUES (?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sss", $file_src, $user, $usuario_destino);
-        $stmt->execute();
-        $stmt->close();
-        $conn->close();
-
-        echo "<p>Archivo compartido con éxito.</p>";
-    } else {
-        echo "<p>Error al compartir el archivo.</p>";
+        if (copy($file_src, $carpeta_destino . $archivo)) {
+            $stmt_insert = $conn->prepare("INSERT INTO shared 
+                                        (file_src, user_src, user_dst) 
+                                        VALUES (?, ?, ?)");
+            $stmt_insert->bind_param("sss", $file_src, $current_user, $usuario_destino);
+            $stmt_insert->execute();
+        }
     }
+    
+    $conn->close();
+    header("Location: inicio-1.php");
+    exit();
 }
+
+
 
 // Obtener la lista de usuarios disponibles para compartir
 $conn = new mysqli("localhost", "root", "momo", "empresa");
@@ -73,12 +110,50 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
-$sql = "SELECT user FROM empleados WHERE user != ?";
+// Obtener departamentos 
+$mapeoDepartamentos = [
+    'ADM' => 'Administración',
+    'DIR' => 'Dirección',
+    'IT' => 'Informática',
+    'LGTC' => 'Logística',
+    'MKT' => 'Marketing',
+    'SL' => 'Ventas'
+
+];
+
+$query_dept = "SELECT DISTINCT dpt FROM empleados 
+              WHERE dpt IN ('IT', 'DIR', 'LGTC', 'ADM', 'SL', 'MKT')
+              AND dpt IS NOT NULL";
+
+$result_dept = $conn->query($query_dept);
+$departamentos = [];
+while ($row = $result_dept->fetch_assoc()) {
+    $departamentos[] = $row['dpt'];
+}
+
+// Obtener usuarios activos
+$sql = "SELECT user FROM empleados WHERE user != ? AND status = 'activo'"; // <- Agregado filtro de status
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $user);
 $stmt->execute();
 $result = $stmt->get_result();
 $usuarios = $result->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+$conn->close();
+
+
+// Obtener la lista de análisis del usuario
+$conn = new mysqli("localhost", "root", "momo", "viruses");
+if ($conn->connect_error) {
+    die("Conexión fallida: " . $conn->connect_error);
+}
+
+$sql = "SELECT filename, scan_date, scan_state FROM archivos WHERE scan_user = ? ORDER BY scan_date DESC";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $user);
+$stmt->execute();
+$result = $stmt->get_result();
+$analisis = $result->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 $conn->close();
 ?>
@@ -328,7 +403,85 @@ $conn->close();
         .file-list button:hover {
             background-color: #cc0000;
         }
-    </style>
+
+        .selector-tipo {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: var(--card-background);
+            border-radius: 8px;
+            border: 1px solid var(--dropdown-border);
+        }
+
+        .selector-tipo label {
+            margin-right: 15px;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+
+        .selector-tipo label:hover {
+            color: var(--section-line-color);
+        }
+
+        /* Contenedores dropdown */
+        #usuarioDestinoContainer,
+        #departamentoDestinoContainer {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: var(--dropdown-background);
+            border-radius: 8px;
+            border: 1px solid var(--dropdown-border);
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            background-color: var(--dropdown-background);
+            color: var(--text-color);
+            border: 1px solid var(--dropdown-border);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--section-line-color);
+            box-shadow: 0 0 0 2px rgba(111, 66, 193, 0.2);
+        }
+
+        /* Ajustes para el modal */
+        #modalCompartir {
+            background-color: var(--card-background);
+            color: var(--text-color);
+            border-radius: 12px;
+            border: 1px solid var(--dropdown-border);
+        }
+
+        #modalCompartir button[type="submit"] {
+            background: var(--button-background);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        #modalCompartir button[type="button"] {
+            background: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--dropdown-border);
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #modalCompartir button[type="button"]:hover {
+            background-color: var(--dropdown-background);
+        }
+        </style>
 </head>
 <body data-theme="light">
     <div class="sidebar">
@@ -336,7 +489,7 @@ $conn->close();
         <ul>
             <li><a href="#" class="active">Editar Perfil</a></li>
             <li><a href="#">Cambiar Idioma</a></li>
-            <li><a href="#">Centro de Ayuda</a></li>
+            <li><a href="ayuda.html">Centro de Ayuda</a></li>
         </ul>
     </div>
 
@@ -350,6 +503,8 @@ $conn->close();
         </header>
 
         <div class="dashboard-container">
+
+            <!-- Sección Mis Documentos -->
             <div class="section">
                 <h2 class="section-title">Mis Documentos</h2>
                 <div class="card">
@@ -386,19 +541,41 @@ $conn->close();
                 <h3>Compartir archivo</h3>
                 <form method="POST">
                     <input type="hidden" id="archivoCompartir" name="archivo">
-                    <label for="usuario_destino">Selecciona un usuario:</label>
-                    <select name="usuario_destino" id="usuario_destino" required>
-                        <?php
-                        foreach ($usuarios as $usuario) {
-                            echo "<option value='{$usuario['user']}'>{$usuario['user']}</option>";
-                        }
-                        ?>
-                    </select>
+                    <div class="selector-tipo">
+                        <label>
+                            <input type="radio" name="tipo_destino" value="usuario" checked onclick="toggleDestino('usuario')"> Usuario
+                        </label>
+                        <label>
+                            <input type="radio" name="tipo_destino" value="departamento" onclick="toggleDestino('departamento')"> Departamento
+                        </label>
+                    </div>
+                    
+                    <div id="usuarioDestinoContainer">
+                        <label for="usuario_destino">Selecciona un usuario:</label>
+                        <select name="usuario_destino" id="usuario_destino">
+                            <?php foreach ($usuarios as $usuario): ?>
+                                <option value='<?= $usuario['user'] ?>'><?= $usuario['user'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
+                    <div id="departamentoDestinoContainer" style="display: none;">
+                        <label for="departamento_destino">Departamento:</label>
+                        <select name="departamento_destino" id="departamento_destino">
+                            <?php foreach ($departamentos as $codigo): ?>
+                                <option value="<?= $codigo ?>">
+                                    <?= $mapeoDepartamentos[$codigo] ?? $codigo ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    
                     <button type="submit" name="compartir">Compartir</button>
                     <button type="button" onclick="cerrarModal()">Cancelar</button>
                 </form>
             </div>
 
+            <!-- Sección Mis Descargas -->
             <div class="section">
                 <h2 class="section-title">Mis Descargas</h2>
                 <div class="card">
@@ -411,12 +588,67 @@ $conn->close();
             </div>
 
             <div class="section">
+                <h2 class="section-title">Analizar Archivos o Carpetas</h2>
+            <div class="card">
+                <form action="/archivos/upload.php" method="post" enctype="multipart/form-data">
+
+                    <input type="file"
+                           id="file-input"
+                           name="files[]"
+                           multiple
+                           style="display: none;">
+
+                    <input type="file"
+                           id="folder-input"
+                           name="folders[]"
+                           webkitdirectory
+                           style="display: none;"
+                           multiple>
+
+                    <div class="upload-options">
+                        <button type="button"
+                                class="upload-btn"
+                                onclick="document.getElementById('file-input').click()">
+                            📄 Seleccionar Archivos
+                        </button>
+
+                        <button type="button"
+                                class="upload-btn"
+                                onclick="document.getElementById('folder-input').click()">
+                            📁 Seleccionar Carpeta
+                        </button>
+                    </div>
+                    <button type="submit" class="analyze-btn">Analizar Todo</button>
+                </form>
+            </div>
+        </div>
+
+            <!-- Sección Mis Análisis -->
+            <div class="section">
                 <h2 class="section-title">Mis Análisis</h2>
                 <div class="card">
                     <h3>Resultados de análisis</h3>
                     <p>Consulta los detalles de tus análisis realizados.</p>
-                    <div class="dropdown empty">
-                        <p>No hay análisis disponibles.</p>
+                    <div class="dropdown">
+                        <ul class="file-list">
+                            <?php
+                            if (empty($analisis)) {
+                                echo "<li>No hay análisis disponibles.</li>";
+                            } else {
+                                foreach ($analisis as $analisisItem) {
+                                    echo "<li>
+                                            <span>{$analisisItem['filename']}</span>
+                                            <div>
+                                                <span>Fecha: {$analisisItem['scan_date']}</span>
+                                            </div>
+                                            <div>
+                                                <span>Estado: {$analisisItem['scan_state']}</span>
+                                            </div>
+                                          </li>";
+                                }
+                            }
+                            ?>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -441,6 +673,20 @@ $conn->close();
         function cerrarModal() {
             document.getElementById('modalCompartir').style.display = 'none';
         }
+
+        function toggleDestino(tipo) {
+            const usuarioContainer = document.getElementById('usuarioDestinoContainer');
+            const deptContainer = document.getElementById('departamentoDestinoContainer');
+            
+            if (tipo === 'usuario') {
+                usuarioContainer.style.display = 'block';
+                deptContainer.style.display = 'none';
+            } else {
+                usuarioContainer.style.display = 'none';
+                deptContainer.style.display = 'block';
+            }
+        }
+
     </script>
 </body>
 </html>
