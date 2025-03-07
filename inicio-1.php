@@ -590,7 +590,7 @@ $conn->close();
             <div class="section">
                 <h2 class="section-title">Analizar Archivos o Carpetas</h2>
             <div class="card">
-                <form action="/archivos/upload.php" method="post" enctype="multipart/form-data">
+                <form action="/archivos/upload-archivos.php" method="post" enctype="multipart/form-data">
 
                     <input type="file"
                            id="file-input"
