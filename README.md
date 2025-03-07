@@ -39,10 +39,37 @@ We used **Ubuntu Server 22.04 (Jellyfish)**.
    CREATE DATABASE name_db;
    USE name_db;
    ```
-6. From here, you can create tables and enter data as needed.
-
----
-
+6. Select the Database (Use the following command to select the 'empresa' database).
+   ```sql
+   USE empresa;
+   ```
+7. Check the Table Structure (to verify the structure of the 'empleados' table):
+   ```sql
+   DESCRIBE empleados;
+   ```
+8. Insert Data into the Table
+   ```sql
+   INSERT INTO empleados (name, user, pass, dpt, mail, status) VALUES
+   ('Alice', 'alice123', SHA2('securepassword', 256), 'HR', 'alice@empresa.com', 'activo'),
+   ('Bob', 'bobm', SHA2('mypassword', 256), 'IT', 'bob@empresa.com', 'pendiente'),
+   ('Charlie', 'charlie01', SHA2('testpass', 256), 'ADM', 'charlie@empresa.com', 'inactivo');
+   ```
+9. Verify the Insrted Data
+    ```sql
+    SELECT * FROM empleados;
+    ```
+10. Updating an Employee Record
+    ```sql
+    UPDATE empleados SET status = 'activo' WHERE user = 'bobm';
+    ```
+11. Deleting an Employee Record
+    ```sql
+    DELETE FROM empleados WHERE user = 'charlie01';
+    ```
+12. Exiting MariaDB
+    ```sql
+    EXIT;
+    ```
 ## **MongoDB Installation and Configuration with Docker**
 
 For MongoDB installation using Docker, refer to the document `Docker_Mongo.pdf` located in the main folder.
