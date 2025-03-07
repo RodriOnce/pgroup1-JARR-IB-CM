@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Ayuda</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background-color: #f9f3f8;
+            --text-color: #333;
+            --card-background: #ffffff;
+            --header-background: #6f42c1;
+            --button-background: #480ac6;
+            --button-hover-background: #5a349f;
+            --highlight-color: #4a2d82;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: var(--card-background);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            color: var(--highlight-color);
+            text-align: center;
+        }
+        .faq {
+            margin-bottom: 15px;
+        }
+        .question {
+            background: var(--button-background);
+            color: white;
+            padding: 12px;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+        .question:hover {
+            background: var(--button-hover-background);
+        }
+        .answer {
+            display: none;
+            padding: 20px;
+            background: #e9ecef;
+            border-radius: 4px;
+            margin-top: 5px;
+            text-align: justify;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Centro de Ayuda</h1>
+
+        <div class="faq">
+            <button class="question">¿Qué es un malware?</button>
+            <div class="answer">Malware es un término que engloba cualquier software malicioso diseñado para dañar, explotar o comprometer dispositivos, redes y datos. Incluye virus, troyanos, ransomware y spyware.</div>
+        </div>
+
+        <div class="faq">
+            <button class="question">¿Qué es un falso positivo?</button>
+            <div class="answer">Un falso positivo ocurre cuando un software de seguridad detecta erróneamente un archivo legítimo como una amenaza. Esto puede suceder por heurísticas agresivas o coincidencias con firmas de malware.</div>
+        </div>
+
+        <div class="faq">
+            <button class="question">¿Qué hacemos con los archivos infectados?</button>
+            <div class="answer">Los archivos infectados se eliminan del servidor para evitar su propagación y comprometer la seguridad del sistema.</div>
+        </div>
+
+        <div class="faq">
+            <button class="question">¿Cómo compartir documentos con otros usuarios?</button>
+            <div class="answer">Respuesta...</div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll(".question").forEach(button => {
+            button.addEventListener("click", () => {
+                const answer = button.nextElementSibling;
+                answer.style.display = answer.style.display === "block" ? "none" : "block";
+            });
+        });
+    </script>
+</body>
+</html>
