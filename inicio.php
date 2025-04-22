@@ -26,33 +26,82 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
 
     if ($usuario && hash('sha256', $input_pass) === $usuario['password']) {
         $_SESSION['username'] = $usuario['nombre'];
-        header("Location: inici.php");
+        header("Location: inicio.php");
         exit();
     } else {
         $error = "Credenciales incorrectas";
     }
 }
 
+// Procesar acciones administrativas
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_departamento'])) {
+    $usuario_id = $_POST['usuario'];
+    $nuevo_dpto = $_POST['departamento'];
+
+    $stmt = $conn->prepare("UPDATE empleados SET dpt = :dpt WHERE id = :id");
+    $stmt->bindParam(':dpt', $nuevo_dpto);
+    $stmt->bindParam(':id', $usuario_id);
+    $stmt->execute();
+
+    header("Location: inicio.php");
+    exit();
+}
+
+if(isset($_GET['aceptar'])) {
+    $usuario_id = $_GET['aceptar'];
+    $stmt = $conn->prepare("UPDATE empleados SET status = 'activo' WHERE id = :id");
+    $stmt->bindParam(':id', $usuario_id);
+    $stmt->execute();
+
+    header("Location: inicio.php");
+    exit();
+}
+
+if(isset($_GET['rechazar'])) {
+    $usuario_id = $_GET['rechazar'];
+    $stmt = $conn->prepare("UPDATE empleados SET status = 'inactivo' WHERE id = :id");
+    $stmt->bindParam(':id', $usuario_id);
+    $stmt->execute();
+
+    header("Location: inicio.php");
+    exit();
+}
+
 // Cerrar sesión
 if (isset($_GET['logout'])) {
     session_destroy();
-    header("Location: index.php");
+    header("Location: index.html");
     exit();
 }
 
 // Obtener datos
-$usuarios_activos = $conn->query("SELECT * FROM empleados")->fetchAll(PDO::FETCH_ASSOC);
-$usuarios_pendientes = [];
-$usuarios_inactivos = [];
+$usuarios_activos = $conn->query("SELECT * FROM empleados WHERE status = 'activo'")->fetchAll(PDO::FETCH_ASSOC);
+$usuarios_pendientes = $conn->query("SELECT * FROM empleados WHERE status = 'pendiente'")->fetchAll(PDO::FETCH_ASSOC);
+$usuarios_inactivos = $conn->query("SELECT * FROM empleados WHERE status = 'inactivo'")->fetchAll(PDO::FETCH_ASSOC);
 
-// Datos simulados
+// Función para obtener archivos
+function obtenerArchivosUnicos($directorio) {
+    $archivos = [];
+    $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directorio));
+
+    foreach ($iterator as $file) {
+        if ($file->isFile()) {
+            $nombre_archivo = $file->getBasename();
+            $archivos[$nombre_archivo] = true;
+        }
+    }
+    return array_keys($archivos);
+}
+
+$directorio_archivos = '/var/www/html/archivos/';
+$archivos_subidos = obtenerArchivosUnicos($directorio_archivos);
+
 $archivos = [
     'subidos' => [],
     'descargados' => [],
     'eliminados' => []
 ];
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -111,6 +160,7 @@ $archivos = [
             grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
             margin: 2rem 0;
+            align-items: start;
         }
 
         .stat-card {
@@ -122,6 +172,8 @@ $archivos = [
             transition: transform 0.3s ease;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .stat-card:hover {
@@ -151,35 +203,71 @@ $archivos = [
             background: var(--card-bg);
             margin-top: 1rem;
             border-radius: 0 0 15px 15px;
+            width: 100%;
+            padding: 0 1rem;
+            box-sizing: border-box;
         }
 
         .detalles-panel.abierto {
-            max-height: 500px;
-            padding: 1.5rem;
+            max-height: 400px;
+            padding: 1rem;
             border: 1px solid rgba(0,0,0,0.1);
+            overflow-y: auto;
         }
 
         .tabla-detalles {
             width: 100%;
             border-collapse: collapse;
+            margin: 0.5rem 0;
+        }
+
+        .tabla-detalles th,
+        .tabla-detalles td {
+            padding: 12px 15px;
+            text-align: left;
         }
 
         .tabla-detalles th {
             background: var(--primary);
             color: white;
-            padding: 1rem;
+            position: sticky;
+            top: 0;
+        }
+
+        .tabla-detalles tr:not(:last-child) td {
+            border-bottom: 1px solid rgba(0,0,0,0.1);
         }
 
         .tabla-detalles td {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 250px;
+        }
+
+        .gestion-section {
+            display: none;
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .usuario-pendiente {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             padding: 1rem;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
+            margin: 1rem 0;
+            background: rgba(0,0,0,0.05);
+            border-radius: 8px;
         }
     </style>
 </head>
 <body data-theme="light">
     <?php if(isset($_SESSION['username'])): ?>
         <div class="dashboard-container">
-            <!-- Sidebar -->
             <div class="sidebar">
                 <h2 style="color: var(--primary); text-align: center; margin-bottom: 2rem;">
                     <i class="fas fa-rocket"></i> Menú
@@ -187,14 +275,18 @@ $archivos = [
                 <div class="stat-card" onclick="mostrarSeccion('panel-control')">
                     <i class="fas fa-tachometer-alt"></i> Panel de Control
                 </div>
+                <div class="stat-card" onclick="mostrarSeccion('gestion-departamentos')">
+                    <i class="fas fa-users-cog"></i> Cambiar Departamento
+                </div>
+                <div class="stat-card" onclick="mostrarSeccion('gestion-pendientes')">
+                    <i class="fas fa-user-check"></i> Gestionar Pendientes
+                </div>
                 <div class="stat-card" onclick="mostrarSeccion('ayuda')">
                     <i class="fas fa-question-circle"></i> Centro de Ayuda
                 </div>
             </div>
 
-            <!-- Main Content -->
             <div class="main-content">
-                <!-- Header -->
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding: 1.5rem; background: var(--header-bg); color: white; border-radius: 15px;">
                     <div>
                         <button onclick="toggleTheme()" style="background: none; border: none; color: white; cursor: pointer; padding: 0.8rem 1.2rem; border-radius: 8px;">
@@ -210,19 +302,20 @@ $archivos = [
                 <!-- Panel de Control -->
                 <div id="panel-control">
                     <div class="stats-grid">
-                        <!-- Primera Fila -->
                         <div class="stat-card" onclick="toggleDetalles('subidos')">
                             <h3><i class="fas fa-upload"></i> Archivos Subidos</h3>
-                            <p style="font-size: 2.5rem; margin: 1rem 0;"><?= count($archivos['subidos']) ?></p>
+                            <p style="font-size: 2.5rem; margin: 1rem 0;"><?= count($archivos_subidos) ?></p>
                             <div class="detalles-panel" id="subidos">
                                 <table class="tabla-detalles">
-                                    <thead>
-                                        <tr><th>ID</th><th>Nombre</th><th>Fecha</th></tr>
-                                    </thead>
+                                    <thead><tr><th>Nombre</th></tr></thead>
                                     <tbody>
-                                        <?php foreach($archivos['subidos'] as $archivo): ?>
-                                        <tr><td colspan="3">No hay archivos subidos</td></tr>
-                                        <?php endforeach; ?>
+                                        <?php if (count($archivos_subidos) > 0): ?>
+                                            <?php foreach ($archivos_subidos as $archivo): ?>
+                                                <tr><td><?= htmlspecialchars($archivo) ?></td></tr>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <tr><td>No hay archivos subidos</td></tr>
+                                        <?php endif; ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -231,33 +324,27 @@ $archivos = [
                         <div class="stat-card" onclick="toggleDetalles('descargados')">
                             <h3><i class="fas fa-download"></i> Descargados</h3>
                             <p style="font-size: 2.5rem; margin: 1rem 0;"><?= count($archivos['descargados']) ?></p>
-                            <div class="detalles-panel" id="descargados">
-                                <!-- Contenido similar -->
-                            </div>
+                            <div class="detalles-panel" id="descargados"></div>
                         </div>
 
                         <div class="stat-card" onclick="toggleDetalles('eliminados')">
                             <h3><i class="fas fa-trash"></i> Eliminados</h3>
                             <p style="font-size: 2.5rem; margin: 1rem 0;"><?= count($archivos['eliminados']) ?></p>
-                            <div class="detalles-panel" id="eliminados">
-                                <!-- Contenido similar -->
-                            </div>
+                            <div class="detalles-panel" id="eliminados"></div>
                         </div>
 
-                        <!-- Segunda Fila -->
                         <div class="stat-card" onclick="toggleDetalles('activos')">
                             <h3><i class="fas fa-user-check"></i> Activos</h3>
                             <p style="font-size: 2.5rem; margin: 1rem 0;"><?= count($usuarios_activos) ?></p>
                             <div class="detalles-panel" id="activos">
                                 <table class="tabla-detalles">
-                                    <thead>
-                                        <tr><th>ID</th><th>Nombre</th></tr>
-                                    </thead>
+                                    <thead><tr><th>ID</th><th>Nombre</th><th>Dept.</th></tr></thead>
                                     <tbody>
                                         <?php foreach($usuarios_activos as $usuario): ?>
                                         <tr>
                                             <td><?= $usuario['id'] ?></td>
                                             <td><?= htmlspecialchars($usuario['name']) ?></td>
+                                            <td><?= htmlspecialchars($usuario['dpt']) ?></td>
                                         </tr>
                                         <?php endforeach; ?>
                                     </tbody>
@@ -269,7 +356,18 @@ $archivos = [
                             <h3><i class="fas fa-user-clock"></i> Pendientes</h3>
                             <p style="font-size: 2.5rem; margin: 1rem 0;"><?= count($usuarios_pendientes) ?></p>
                             <div class="detalles-panel" id="pendientes">
-                                <!-- Contenido similar -->
+                                <table class="tabla-detalles">
+                                    <thead><tr><th>Nombre</th></tr></thead>
+                                    <tbody>
+                                        <?php if (count($usuarios_pendientes) > 0): ?>
+                                            <?php foreach ($usuarios_pendientes as $usuario): ?>
+                                                <tr><td><?= htmlspecialchars($usuario['name']) ?></td></tr>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <tr><td>No hay usuarios pendientes</td></tr>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
 
@@ -277,15 +375,78 @@ $archivos = [
                             <h3><i class="fas fa-user-slash"></i> Inactivos</h3>
                             <p style="font-size: 2.5rem; margin: 1rem 0;"><?= count($usuarios_inactivos) ?></p>
                             <div class="detalles-panel" id="inactivos">
-                                <!-- Contenido similar -->
+                                <table class="tabla-detalles">
+                                    <thead><tr><th>Nombre</th></tr></thead>
+                                    <tbody>
+                                        <?php if (count($usuarios_inactivos) > 0): ?>
+                                            <?php foreach ($usuarios_inactivos as $usuario): ?>
+                                                <tr><td><?= htmlspecialchars($usuario['name']) ?></td></tr>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <tr><td>No hay usuarios inactivos</td></tr>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Gestión de Departamentos -->
+                <div id="gestion-departamentos" class="gestion-section">
+                    <h2><i class="fas fa-building"></i> Cambiar Departamento</h2>
+                    <form method="POST" style="margin-top: 2rem;">
+                        <div style="display: grid; gap: 1rem; max-width: 500px;">
+                            <select name="usuario" required style="padding: 1rem; border-radius: 8px;">
+                                <?php foreach($usuarios_activos as $usuario): ?>
+                                    <option value="<?= $usuario['id'] ?>"><?= htmlspecialchars($usuario['name']) ?> (<?= $usuario['dpt'] ?>)</option>
+                                <?php endforeach; ?>
+                            </select>
+
+                            <select name="departamento" required style="padding: 1rem; border-radius: 8px;">
+                                <option value="IT">IT</option>
+                                <option value="DIR">Dirección</option>
+                                <option value="ADM">Administración</option>
+                                <option value="SL">Ventas</option>
+                                <option value="MKT">Marketing</option>
+                                <option value="LGTC">Logística</option>
+                            </select>
+
+                            <button type="submit" name="cambiar_departamento"
+                                    style="padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 8px;">
+                                <i class="fas fa-sync-alt"></i> Actualizar Departamento
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Gestión de Pendientes -->
+                <div id="gestion-pendientes" class="gestion-section">
+                    <h2><i class="fas fa-user-clock"></i> Usuarios Pendientes</h2>
+                    <div style="margin-top: 2rem;">
+                        <?php foreach($usuarios_pendientes as $usuario): ?>
+                            <div class="usuario-pendiente">
+                                <div>
+                                    <h3><?= htmlspecialchars($usuario['name']) ?></h3>
+                                    <p><?= $usuario['mail'] ?></p>
+                                </div>
+                                <div style="display: flex; gap: 1rem;">
+                                    <a href="?aceptar=<?= $usuario['id'] ?>"
+                                       style="padding: 0.5rem 1rem; background: var(--success); color: white; text-decoration: none; border-radius: 5px;">
+                                        <i class="fas fa-check"></i> Aceptar
+                                    </a>
+                                    <a href="?rechazar=<?= $usuario['id'] ?>"
+                                       style="padding: 0.5rem 1rem; background: var(--danger); color: white; text-decoration: none; border-radius: 5px;">
+                                        <i class="fas fa-times"></i> Rechazar
+                                    </a>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
         </div>
     <?php else: ?>
-        <!-- Login Form -->
         <div style="max-width: 400px; margin: 5rem auto; padding: 2rem;">
             <div class="stat-card" style="padding: 2rem; text-align: center;">
                 <h2 style="color: var(--primary); margin-bottom: 1.5rem;">
@@ -310,8 +471,20 @@ $archivos = [
 
     <script>
         function toggleDetalles(id) {
-            const panel = document.getElementById(id);
-            panel.classList.toggle('abierto');
+            const todosPaneles = document.querySelectorAll('.detalles-panel');
+            const panelActual = document.getElementById(id);
+
+            todosPaneles.forEach(panel => {
+                if (panel !== panelActual) panel.classList.remove('abierto');
+            });
+
+            panelActual.classList.toggle('abierto');
+
+            if (panelActual.classList.contains('abierto')) {
+                setTimeout(() => {
+                    panelActual.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 300);
+            }
         }
 
         function toggleTheme() {
@@ -321,8 +494,16 @@ $archivos = [
             localStorage.setItem('theme', newTheme);
         }
 
-        // Cargar tema guardado
+        function mostrarSeccion(seccionId) {
+            document.querySelectorAll('.gestion-section, #panel-control').forEach(seccion => {
+                seccion.style.display = 'none';
+            });
+            document.getElementById(seccionId).style.display = 'block';
+        }
+
+        // Cargar tema y mostrar panel principal
         document.body.setAttribute('data-theme', localStorage.getItem('theme') || 'light');
+        window.onload = () => mostrarSeccion('panel-control');
     </script>
 </body>
 </html>
