@@ -54,6 +54,18 @@ We used **Ubuntu Server 22.04 (Jellyfish)**.
    DESCRIBE archivos;
    ```
 8. Insert Data into the Table
+   ```
+   CREATE TABLE empleados (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    user VARCHAR(50) NOT NULL UNIQUE,
+    pass CHAR(64) NOT NULL,  -- SHA2(256) devuelve 64 caracteres hexadecimales
+    dpt VARCHAR(50) NOT NULL,
+    mail VARCHAR(100) NOT NULL UNIQUE,
+    status ENUM('activo', 'pendiente', 'inactivo') NOT NULL
+    );
+   ```
+
    ```sql
    INSERT INTO empleados (name, user, pass, dpt, mail, status) VALUES
    ('Alice', 'alice123', SHA2('securepassword', 256), 'HR', 'alice@empresa.com', 'activo'),
@@ -66,28 +78,28 @@ We used **Ubuntu Server 22.04 (Jellyfish)**.
    ('malware.exe', 'b7e6a1c9d2f8...', '2025-03-08', 'scanner02', 'infected'),
    ('report.docx', 'c9f8e7d6a5b4...', '2025-03-08', 'scanner03', 'clean');
    ```
-9. Verify the Insrted Data
+10. Verify the Insrted Data
     ```sql
     SELECT * FROM empleados;
     ```
     ```
     SELECT * FROM archivos;
     ```
-10. Updating an Employee Record
+11. Updating an Employee Record
     ```sql
     UPDATE empleados SET status = 'activo' WHERE user = 'bobm';
     ```
     ```
     UPDATE archivos SET scan_state = 'quarantined' WHERE filename = `malware.exe`
     ```
-11. Deleting an Employee Record
+12. Deleting an Employee Record
     ```sql
     DELETE FROM empleados WHERE user = 'charlie01';
     ```
     ```
     DELETE FROM archivos WHERE filename = 'report.docx'
     ```
-12. Exiting MariaDB
+13. Exiting MariaDB
     ```sql
     EXIT;
     ```
