@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Generador de Contraseñas</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; background: #f5f5f5; }
+    input[type=number] { width: 4rem; }
+  </style>
+</head>
+<body>
+  <h1>Generador de Contraseñas o Frases</h1>
+  
+  <label><input type="radio" name="modo" value="pass" checked> Contraseña</label>
+  <label><input type="radio" name="modo" value="frase"> Frase</label>
+  <div id="pass-options">
+    <p>Longitud total: <input type="number" id="longitud" value="12"></p>
+    <p>Mayúsculas: <input type="number" id="mayus" value="2"></p>
+    <p>Minúsculas: <input type="number" id="minus" value="4"></p>
+    <p>Números: <input type="number" id="nums" value="3"></p>
+    <p>Símbolos: <input type="number" id="symbols" value="3"></p>
+  </div>
+  <div id="frase-options" style="display:none;">
+    <p>Número de palabras: <input type="number" id="numPalabras" value="4"></p>
+  </div>
+  <button onclick="generar()">Generar</button>
+  <h2>Resultado:</h2>
+  <pre id="resultado"></pre>
+
+  <script>
+    const palabras = ["gato", "sol", "nube", "teclado", "azul", "fuego", "luz", "montaña", "verde", "rápido"];
+
+    function generarContraseña(longitud, mayus, minus, nums, symbols) {
+      const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const lower = "abcdefghijklmnopqrstuvwxyz";
+      const numbers = "0123456789";
+      const symbs = "!@#$%&*+-_?";
+
+      if (mayus + minus + nums + symbols > longitud) return "⚠️ Suma de tipos mayor que longitud.";
+
+      let resto = longitud - (mayus + minus + nums + symbols);
+      minus += resto;
+
+      let chars = [
+        ...getRandom(upper, mayus),
+        ...getRandom(lower, minus),
+        ...getRandom(numbers, nums),
+        ...getRandom(symbs, symbols),
+      ];
+
+      return shuffle(chars).join('');
+    }
+
+    function generarFrase(n) {
+      let frase = [];
+      for (let i = 0; i < n; i++) {
+        frase.push(palabras[Math.floor(Math.random() * palabras.length)]);
+      }
+      return frase.join('-');
+    }
+
+    function getRandom(str, count) {
+      return Array.from({length: count}, () => str[Math.floor(Math.random() * str.length)]);
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function generar() {
+      const modo = document.querySelector('input[name=modo]:checked').value;
+      let resultado = '';
+      if (modo === 'pass') {
+        const l = +document.getElementById('longitud').value;
+        const m = +document.getElementById('mayus').value;
+        const mi = +document.getElementById('minus').value;
+        const n = +document.getElementById('nums').value;
+        const s = +document.getElementById('symbols').value;
+        resultado = generarContraseña(l, m, mi, n, s);
+      } else {
+        const num = +document.getElementById('numPalabras').value;
+        resultado = generarFrase(num);
+      }
+      document.getElementById('resultado').textContent = resultado;
+    }
+
+    document.querySelectorAll('input[name=modo]').forEach(el => {
+      el.addEventListener('change', () => {
+        document.getElementById('pass-options').style.display = el.value === 'pass' ? 'block' : 'none';
+        document.getElementById('frase-options').style.display = el.value === 'frase' ? 'block' : 'none';
+      });
+    });
+  </script>
+</body>
+</html>
