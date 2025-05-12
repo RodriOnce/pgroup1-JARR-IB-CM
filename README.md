@@ -55,6 +55,7 @@ We used **Ubuntu Server 22.04 (Jellyfish)**.
    ```
 8. Insert Data into the Table
    ```
+   # Estructura de la Base de Datos
    CREATE TABLE empleados (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -64,6 +65,31 @@ We used **Ubuntu Server 22.04 (Jellyfish)**.
     mail VARCHAR(100) NOT NULL UNIQUE,
     status ENUM('activo', 'pendiente', 'inactivo') NOT NULL
     );
+   ```
+
+   ```sql
+   # Tabla `shared`
+   CREATE TABLE shared (
+    id_shared INT AUTO_INCREMENT PRIMARY KEY,
+    file_src VARCHAR(255) NOT NULL,
+    user_src VARCHAR(255) NOT NULL,
+    dpt_src VARCHAR(255),
+    user_dst VARCHAR(255) NOT NULL,
+    dpt_dst VARCHAR(255),
+    share_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP()
+   );
+   ```
+
+   ```sql
+   CREATE TABLE archivos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    filename VARCHAR(255) NOT NULL,
+    hash VARCHAR(255) NOT NULL,
+    scan_date DATE NOT NULL,
+    scan_user VARCHAR(100) NOT NULL,
+    scan_state VARCHAR(50) NOT NULL,
+    download_count INT DEFAULT 0
+   );
    ```
 
    ```sql
