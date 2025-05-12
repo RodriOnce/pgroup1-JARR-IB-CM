@@ -98,7 +98,7 @@ We used **Ubuntu Server 22.04 (Jellyfish)**.
    ('Bob', 'bobm', SHA2('mypassword', 256), 'IT', 'bob@empresa.com', 'pendiente'),
    ('Charlie', 'charlie01', SHA2('testpass', 256), 'ADM', 'charlie@empresa.com', 'inactivo');
    ```
-   ```
+   ```sql
    INSERT INTO archivos (filename, hash, scan_date, scan_user, scan_state) VALUES
    ('document.pdf', 'a5d3f4b6789c...', '2025-03-08', 'scanner01', 'clean'),
    ('malware.exe', 'b7e6a1c9d2f8...', '2025-03-08', 'scanner02', 'infected'),
