@@ -54,7 +54,7 @@ We used **Ubuntu Server 22.04 (Jellyfish)**.
    DESCRIBE archivos;
    ```
 8. Insert Data into the Table
-   ```
+   ```sql
    # Estructura de la Base de Datos
    CREATE TABLE empleados (
     id INT AUTO_INCREMENT PRIMARY KEY,
