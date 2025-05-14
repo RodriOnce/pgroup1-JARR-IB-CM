@@ -55,7 +55,7 @@ We used **Ubuntu Server 22.04 (Jellyfish)**.
    ```
 8. Insert Data into the Table
    ```sql
-   # Estructura de la Base de Datos
+      # Tabla `empleados`
    CREATE TABLE empleados (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -81,6 +81,7 @@ We used **Ubuntu Server 22.04 (Jellyfish)**.
    ```
 
    ```sql
+      # Tabla `archivos`
    CREATE TABLE archivos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     filename VARCHAR(255) NOT NULL,
