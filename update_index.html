@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="TrackZero — Plataforma global para la verificación avanzada de archivos, URLs e inteligencia de amenazas." />
+  <title>TrackZero | Enterprise Threat Verification</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ========= TOKENS ========= */
+    :root {
+      --brand-900: #0d112b;
+      --brand-700: #233172;
+      --brand-600: #3146b4;
+      --brand-500: #5366e3;
+      --brand-400: #7f8cff;
+
+      --grey-100: #f9fafc;
+      --grey-900: #0b0d12;
+      --grey-800: #181b22;
+
+      --radius-md: 0.75rem;
+      --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow-light: 0 6px 18px rgba(0, 0, 0, 0.06);
+      --shadow-dark: 0 6px 26px rgba(0, 0, 0, 0.5);
+    }
+
+    [data-theme="light"] {
+      --bg: var(--grey-100);
+      --surface: #fff;
+      --text: #1d1f28;
+      --accent: var(--brand-600);
+      --accent-hover: var(--brand-500);
+      --shadow: var(--shadow-light);
+      --icon-filter: none;
+    }
+    [data-theme="dark"] {
+      --bg: var(--grey-900);
+      --surface: var(--grey-800);
+      --text: #e8eaf6;
+      --accent: var(--brand-400);
+      --accent-hover: var(--brand-500);
+      --shadow: var(--shadow-dark);
+      --icon-filter: invert(1);
+    }
+
+    /* ========= RESET ========= */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      font-family: "Inter", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    img {
+      max-width: 100%;
+      display: block;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    button {
+      font-family: inherit;
+      border: none;
+      cursor: pointer;
+    }
+    section[id] {
+      scroll-margin-top: 88px;
+    }
+
+    /* ========= HEADER ========= */
+    header {
+      background: var(--surface);
+      backdrop-filter: blur(10px) saturate(160%);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .container {
+      width: min(90%, 1280px);
+      margin: auto;
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 0;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: "Playfair Display", serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .brand img {
+      height: 42px;
+      width: auto;
+    }
+
+    /* Nav links */
+    .nav__links {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+    .nav__link {
+      position: relative;
+      font-weight: 500;
+      font-size: 0.94rem;
+      letter-spacing: 0.3px;
+    }
+    .nav__link::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -6px;
+      width: 100%;
+      height: 2px;
+      border-radius: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform var(--transition);
+    }
+    .nav__link:hover,
+    .nav__link:focus {
+      color: var(--accent);
+    }
+    .nav__link:hover::after,
+    .nav__link.active::after {
+      transform: scaleX(1);
+    }
+
+    /* Burger */
+    .burger {
+      display: none;
+      width: 44px;
+      height: 44px;
+      border: 2px solid currentColor;
+      border-radius: 8px;
+      background: transparent;
+      gap: 6px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: background var(--transition);
+    }
+    .burger span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: currentColor;
+      border-radius: 1px;
+      transition: transform var(--transition);
+    }
+    .burger.open span:nth-child(1) {
+      transform: translateY(4px) rotate(45deg);
+    }
+    .burger.open span:nth-child(2) {
+      transform: scaleX(0);
+    }
+    .burger.open span:nth-child(3) {
+      transform: translateY(-4px) rotate(-45deg);
+    }
+
+    /* Mobile drawer */
+    .drawer {
+      display: none;
+      flex-direction: column;
+      gap: 1.5rem;
+      position: fixed;
+      top: 72px;
+      right: 0;
+      width: 260px;
+      padding: 2rem 1.5rem;
+      background: var(--surface);
+      box-shadow: -6px 0 16px rgba(0, 0, 0, 0.15);
+      z-index: 999;
+    }
+    .drawer a {
+      font-weight: 500;
+      font-size: 1rem;
+    }
+
+    /* Actions */
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+    }
+    .btn {
+      padding: 0.6rem 1.5rem;
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+      font-weight: 600;
+      background: var(--accent);
+      color: #fff;
+      transition: background var(--transition);
+    }
+    .btn--ghost {
+      background: transparent;
+      border: 1.5px solid var(--accent);
+      color: var(--accent);
+    }
+    .btn:hover {
+      background: var(--accent-hover);
+    }
+    .btn--ghost:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+    .theme-toggle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid currentColor;
+      background: transparent;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background var(--transition);
+    }
+    .theme-toggle:hover {
+      background: rgba(0, 0, 0, 0.07);
+    }
+
+    /* ========= HERO ========= */
+    .hero {
+      min-height: 70vh;
+      background: radial-gradient(120% 120% at top left, var(--brand-600) 0%, var(--brand-700) 55%, var(--brand-900) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 1.6rem;
+      color: #fff;
+    }
+    .hero__content {
+      max-width: 740px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+    }
+    .hero__title {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(2.4rem, 6vw, 3.8rem);
+      line-height: 1.1;
+      letter-spacing: 0.45px;
+    }
+    .hero__subtitle {
+      font-size: 1.06rem;
+      font-weight: 300;
+      opacity: 0.9;
+    }
+    .cta-group {
+      display: flex;
+      gap: 1.1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .cta-group .btn,
+    .cta-group .btn--ghost {
+      min-width: 170px;
+    }
+
+    /* ========= SECTIONS ========= */
+    main {
+      width: min(90%, 1280px);
+      margin: auto;
+      padding: 4rem 0;
+    }
+    .section-title {
+      font-family: "Playfair Display", serif;
+      font-size: 1.8rem;
+      color: var(--accent);
+      margin-bottom: 2.6rem;
+      text-align: center;
+    }
+    .grid {
+      display: grid;
+      gap: 2.6rem;
+    }
+    .grid--cards {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow);
+      padding: 2.3rem 2rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 1.3rem;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+    }
+    .card__icon {
+      width: 68px;
+      height: 68px;
+      margin: auto;
+      filter: var(--icon-filter);
+    }
+    .card h3 {
+      font-size: 1.2rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .card p {
+      font-size: 0.93rem;
+      opacity: 0.9;
+    }
+    .card form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    /* ========= FOOTER ========= */
+    footer {
+      background: var(--surface);
+      text-align: center;
+      padding: 2.8rem 1.5rem;
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+    footer a {
+      color: var(--accent);
+    }
+
+    /* ========= RESPONSIVE ========= */
+    @media (max-width: 820px) {
+      .nav__links {
+        display: none;
+      }
+      .burger {
+        display: flex;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ========= HEADER ========= -->
+  <header>
+    <div class="container nav">
+      <a href="#" class="brand"><img src="img/logo.png" alt="Logo" />TrackZero</a>
+
+      <!-- Desktop nav -->
+      <ul class="nav__links" id="desktopNav">
+        <li><a href="#verificador" class="nav__link">Verificador</a></li>
+        <li><a href="#recursos" class="nav__link">Recursos</a></li>
+        <li><a href="#contacto" class="nav__link">Contacto</a></li>
+      </ul>
+
+      <!-- Burger -->
+      <button class="burger" aria-label="Menú" onclick="toggleDrawer(this)"><span></span><span></span><span></span></button>
+
+      <!-- Actions -->
+      <div class="actions">
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Cambiar a modo oscuro">🌙</button>
+        <a href="registro.php" class="btn--ghost btn">Regístrate</a>
+        <a href="login.html" class="btn">Iniciar Sesión</a>
+      </div>
+    </div>
+
+    <!-- Mobile drawer -->
+    <nav class="drawer" id="drawer">
+      <a href="#verificador" onclick="closeDrawer()">Verificador</a>
+      <a href="#recursos" onclick="closeDrawer()">Recursos</a>
+      <a href="#contacto" onclick="closeDrawer()">Contacto</a>
+    </nav>
+  </header>
+
+  <!-- ========= HERO ========= -->
+  <section class="hero" id="home">
+    <div class="hero__content">
+      <h1 class="hero__title">Verificación global de amenazas en segundos</h1>
+      <p class="hero__subtitle">Analiza archivos, URLs y consulta fuentes estratégicas de inteligencia para proteger tu organización a escala mundial.</p>
+      <div class="cta-group">
+        <a href="#verificador" class="btn">Comenzar ahora</a>
+        <a href="registro.php" class="btn--ghost btn">Solicitar demo</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========= MAIN ========= -->
+  <main>
+    <!-- Verificador -->
+    <section id="verificador">
+      <h2 class="section-title">Herramientas de verificación</h2>
+      <div class="grid grid--cards">
+        <!-- Subir archivos -->
+        <article class="card">
+          <img src="https://cdn-icons-png.flaticon.com/512/304/304579.png" alt="Icono subir" class="card__icon" />
+          <h3>Subir archivos/carpetas</h3>
+          <p>Escanea documentos o directorios completos y recibe un informe alineado a MITRE ATT&CK.</p>
+          <form action="upload.php" method="post" enctype="multipart/form-data">
+            <input type="file" name="files[]" multiple hidden id="file-input" />
+            <input type="file" name="folders[]" multiple webkitdirectory hidden id="folder-input" />
+            <button type="button" class="btn--ghost btn" onclick="document.getElementById('file-input').click()">Seleccionar archivos</button>
+            <button type="button" class="btn--ghost btn" onclick="document.getElementById('folder-input').click()">Seleccionar carpeta</button>
+            <button type="submit" class="btn">Analizar</button>
+          </form>
+        </article>
+
+        <!-- Verificar URL -->
+        <article class="card">
+          <img src="https://cdn-icons-png.flaticon.com/512/1006/1006771.png" alt="Icono URL" class="card__icon" />
+          <h3>Verificar URL</h3>
+          <p>Bloquea phishing y C2 con análisis reputacional y machine learning.</p>
+          <form action="verif-url.php" method="post">
+            <input type="url" name="url" placeholder="https://ejemplo.com" required style="padding:0.75rem 1rem;border:1px solid rgba(0,0,0,.15);border-radius:var(--radius-md);width:100%;" />
+            <button class="btn" type="submit">Verificar</button>
+          </form>
+        </article>
+
+        <!-- Búsqueda global -->
+        <article class="card">
+          <img src="https://cdn-icons-png.flaticon.com/512/786/786407.png" alt="Icono búsqueda" class="card__icon" />
+          <h3>Búsqueda global</h3>
+          <p>Consulta nuestra inteligencia de amenazas: IoCs, CVEs y campañas activas.</p>
+          <form onsubmit="globalSearch(event)">
+            <input type="text" id="global-q" placeholder="Buscar…" required style="padding:0.75rem 1rem;border:1px solid rgba(0,0,0,.15);border-radius:var(--radius-md);width:100%;" />
+            <button class="btn" type="submit">Buscar</button>
+          </form>
+        </article>
+      </div>
+    </section>
+
+    <!-- Recursos -->
+    <section id="recursos" style="margin-top:4rem;">
+      <h2 class="section-title">Recursos externos de confianza</h2>
+      <div class="grid grid--cards">
+        <!-- INCIBE -->
+        <article class="card">
+          <img src="https://cdn-icons-png.flaticon.com/512/2541/2541980.png" alt="Icono INCIBE" class="card__icon" />
+          <h3>INCIBE-CERT</h3>
+          <p>Acceso inmediato a vulnerabilidades, avisos y blog del CERT español.</p>
+          <a href="https://www.incibe.es/index.php/incibe-cert/alerta-temprana/vulnerabilidades" target="_blank" class="btn--ghost btn">Vulnerabilidades</a>
+          <a href="https://www.incibe.es/incibe-cert/alerta-temprana/avisos" target="_blank" class="btn--ghost btn">Avisos</a>
+          <a href="https://www.incibe.es/incibe-cert/blog" target="_blank" class="btn--ghost btn">Blog</a>
+        </article>
+
+        <!-- ZDI -->
+        <article class="card">
+          <img src="https://cdn-icons-png.flaticon.com/512/705/705025.png" alt="Icono ZDI" class="card__icon" />
+          <h3>Zero Day Initiative</h3>
+          <p>Listados de 0‑days descubiertos por ZDI y su estado de publicación.</p>
+          <a href="https://www.zerodayinitiative.com/advisories/published/" target="_blank" class="btn--ghost btn">Publicadas</a>
+          <a href="https://www.zerodayinitiative.com/advisories/upcoming/" target="_blank" class="btn--ghost btn">Próximas</a>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========= FOOTER ========= -->
+  <footer id="contacto">
+    © <span id="yr"></span> TrackZero — Enterprise Cyber Intelligence.<br />
+    Al utilizar la plataforma, acepta nuestras <a href="seguridad.html">condiciones</a> y <a href="privacidad.html">política de privacidad</a>.
+  </footer>
+
+  <!-- ========= SCRIPTS ========= -->
+  <script>
+    // Year
+    document.getElementById("yr").textContent = new Date().getFullYear();
+
+    // Theme toggle
+    function toggleTheme() {
+      const root = document.documentElement;
+      const isLight = root.getAttribute("data-theme") === "light";
+      root.setAttribute("data-theme", isLight ? "dark" : "light");
+      document.querySelector(".theme-toggle").textContent = isLight ? "☀️" : "🌙";
+    }
+
+    // Drawer
+    function toggleDrawer(btn) {
+      const drawer = document.getElementById("drawer");
+      btn.classList.toggle("open");
+      drawer.style.display = drawer.style.display === "flex" ? "none" : "flex";
+    }
+    function closeDrawer() {
+      document.querySelector(".burger").classList.remove("open");
+      document.getElementById("drawer").style.display = "none";
+    }
+
+    // Scroll spy for active nav link
+    const sections = document.querySelectorAll("section[id]");
+    const navLinks = document.querySelectorAll(".nav__link");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const id = entry.target.getAttribute("id");
+          const link = document.querySelector(`.nav__link[href="#${id}"]`);
+          if (entry.isIntersecting) {
+            navLinks.forEach((l) => l.classList.remove("active"));
+            link && link.classList.add("active");
+          }
+        });
+      },
+      { rootMargin: "-50% 0px -50% 0px" }
+    );
+    sections.forEach((sec) => observer.observe(sec));
+
+    // Global search placeholder
+    function globalSearch(e) {
+      e.preventDefault();
+      const q = document.getElementById("global-q").value.trim();
+      if (!q) return;
+      alert("Buscando: " + q);
+    }
+  </script>
+</body>
+</html>
