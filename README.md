@@ -191,3 +191,54 @@ All files and folders are located in the `/var/www/html/` directory. Below is an
 
 - This document will continue to be updated and expanded with additional content and instructions.
 
+
+
+__________________________________________________
+
+
+# TrackZero &mdash; README de Seguridad  
+**Última actualización:** 22 may 2025  
+
+---
+
+## 1. Resumen de mejoras
+
+| Capa | Implementación | Riesgo mitigado |
+|------|---------------|-----------------|
+| **Contraseñas** | `password_hash()` + `password_verify()` (bcrypt) | Descifrado de hashes, rainbow-tables |
+| **SQL** | PDO + *prepared statements* | Inyección SQL |
+| **CSRF** | Token de 32 bytes (`csrf_token.php`) + fetch en `login.html` | Cross-Site Request Forgery |
+| **Sesiones** | Cookies `HttpOnly`, `SameSite=Strict`, `secure` listo para HTTPS &nbsp;+&nbsp;`session_regenerate_id()` | Robo / fijación de sesión |
+| **Cabeceras** | `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, CSP (↓) | Click-jacking, MIME sniffing, bloqueo XSS inline |
+| **Errores** | Mensaje genérico (“Credenciales incorrectas”) | Enumeración de usuarios |
+| **Fuerza bruta** | `sleep(1)` tras fallo (ampliable a contador/IP) | Bruteforce masivo |
+| **Subidas públicas** | `move_uploaded_file()` → `/escanear/` (`750`), nombres saneados | Listado / ejecución arbitraria |
+| **Archivos usuario** | `/archivos/<uid>/` auto-creado + `Options -Indexes` | Descarga directa / listados |
+| **Cache busting** | `Cache-Control: no-store` solo en `login.html` | Token CSRF vacío por HTML cacheado |
+
+---
+
+## 2. Rutas y ficheros clave
+
+| Ruta | Propósito |
+|------|-----------|
+| `/var/www/html/login.html` | Formulario + fetch de token |
+| `/var/www/html/csrf_token.php` | Devuelve `{"token":"…"}` |
+| `/var/www/html/login.php` | Valida usuario, crea carpeta `<uid>` |
+| `/var/www/html/registro.php` | Alta segura de usuarios |
+| `/var/www/html/archivos/` | Almacén de ficheros por usuario |
+| `/var/www/html/escanear/` | Subidas anónimas analizadas por `bueno.py` |
+| `/var/www/html/.htaccess` | Cabeceras globales + CSP + no-cache login |
+| `/var/www/html/archivos/.htaccess` | `Options -Indexes` |
+
+---
+
+## 3. CSP aplicada
+
+```text
+default-src 'self';
+style-src  'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net;
+script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
+font-src   'self' https://fonts.gstatic.com https://cdn.jsdelivr.net;
+img-src    'self' data: https:;
+frame-ancestors 'none';
