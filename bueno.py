@@ -1,4 +1,3 @@
-#Bibliotecas necesarias
 import os
 import csv
 import time
@@ -7,17 +6,15 @@ import hashlib
 import mysql.connector
 from datetime import datetime
 
-# Configuración de variables
-
-API_KEY = 'PLACE HERE YOUR API KEY'
+# Configura tus variables
+API_KEY = '446f02363118eb9dc67c1c250a5eaacd971f6ccf4a26b93b6a07b175bbcc4777'
 DIRECTORIO_ORIGEN = '/var/www/html/escanear'
 DIRECTORIO_SANO = '/var/www/html/sano'
 DIRECTORIO_INFECCION = '/var/www/html/infectado'
 today = datetime.now().strftime('%Y-%m-%d')
 CSV_FILE = f'/var/www/html/CSV/scan_results_{today}.csv'
 
-# Conexión a la base de datos
-
+# Función para conectarse a la base de datos
 def conectar_bd():
     return mysql.connector.connect(
         host='localhost',
@@ -26,8 +23,7 @@ def conectar_bd():
         database='viruses'
     )
 
-# Insertar datos en la base de datos "Archivos"
-
+# Función para insertar datos en la base de datos
 def insertar_en_bd(filename, hash_value, scan_user, scan_state):
     try:
         conexion = conectar_bd()
@@ -45,8 +41,7 @@ def insertar_en_bd(filename, hash_value, scan_user, scan_state):
         cursor.close()
         conexion.close()
 
-# Función para calcular el hash de un archivo, insertado en "hash value"
-
+# Función para calcular el hash de un archivo
 def calcular_hash(file_path, algoritmo='sha256'):
     hash_func = hashlib.new(algoritmo)
     with open(file_path, 'rb') as f:
@@ -55,16 +50,30 @@ def calcular_hash(file_path, algoritmo='sha256'):
     return hash_func.hexdigest()
 
 # Función para subir archivos a VirusTotal
+# def subir_archivo(filepath):
+#     url = 'https://www.virustotal.com/api/v3/files'
+#     headers = {'x-apikey': API_KEY}
+#     files = {'file': (os.path.basename(filepath), open(filepath, 'rb'))}
+#     response = requests.post(url, headers=headers, files=files)
+#     return response.json()
 
 def subir_archivo(filepath):
     url = 'https://www.virustotal.com/api/v3/files'
     headers = {'x-apikey': API_KEY}
-    files = {'file': (os.path.basename(filepath), open(filepath, 'rb'))}
-    response = requests.post(url, headers=headers, files=files)
-    return response.json()
+    with open(filepath, 'rb') as f:
+        files = {'file': (os.path.basename(filepath), f)}
+        response = requests.post(url, headers=headers, files=files)
+
+    try:
+        return response.json()
+    except Exception as e:
+        print(f"Error al parsear JSON desde VirusTotal: {e}")
+        print(f"Código de estado HTTP: {response.status_code}")
+        print(f"Contenido de la respuesta:\n{response.text}")
+        return {}  # Devuelve un diccionario vacío si hay fallo
+
 
 # Función para obtener el informe de VirusTotal con verificación de estado
-
 def obtener_informe(file_id):
     url = f'https://www.virustotal.com/api/v3/analyses/{file_id}'
     headers = {'x-apikey': API_KEY}
@@ -72,16 +81,16 @@ def obtener_informe(file_id):
         response = requests.get(url, headers=headers).json()
         status = response.get('data', {}).get('attributes', {}).get('status')
 
+        # Esperar hasta que el estado sea 'completed'
         if status == 'completed':
             return response
         print("Esperando a que el análisis se complete...")
-        time.sleep(15) 
+        time.sleep(5)  # Espera adicional para que finalice el análisis
 
 # Función para procesar archivos de un directorio
-
 def procesar_archivos():
-
-    with open(CSV_FILE, mode='a', newline='') as csvfile:  # Modo 'a' para añadir datos sin sobrescribir los que ya hay
+    # Crear archivo CSV
+    with open(CSV_FILE, mode='a', newline='') as csvfile:  # Modo 'a' para añadir datos sin sobrescribir
         fieldnames = ['filename', 'file_id', 'status', 'malicious', 'harmless', 'suspicious',
                       'undetected', 'date', 'time', 'user', 'final_path']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -129,7 +138,7 @@ def procesar_archivos():
                 date = datetime.now().strftime('%Y-%m-%d')
                 time_now = datetime.now().strftime('%H:%M:%S')
                 #user = os.getlogin()
-                user = os.environ.get("USER") or os.environ.get("USERNAME") or "www-data"
+                user = os.environ.get('USER') or os.environ.get('USERNAME') or 'www-data'
 
                 # Guardar resultados en CSV
                 writer.writerow({
