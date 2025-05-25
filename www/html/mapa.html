@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de Ciberamenazas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+    <style>
+        /* ========= TOKENS ========= */
+        :root {
+            --brand-900: #0d112b;
+            --brand-700: #233172;
+            --brand-600: #3146b4;
+            --brand-500: #5366e3;
+            --brand-400: #7f8cff;
+
+            --grey-100: #f9fafc;
+            --grey-900: #0b0d12;
+            --grey-800: #181b22;
+
+            --radius-md: 0.75rem;
+            --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-light: 0 6px 18px rgba(0, 0, 0, 0.06);
+            --shadow-dark: 0 6px 26px rgba(0, 0, 0, 0.5);
+
+            /* spotlight position */
+            --mouse-x: 50vw;
+            --mouse-y: 50vh;
+        }
+
+        /* Light theme */
+        [data-theme="light"] {
+            --bg: var(--grey-100);
+            --surface: #fff;
+            --text: #1d1f28;
+            --accent: var(--brand-600);
+            --accent-hover: var(--brand-500);
+            --shadow: var(--shadow-light);
+            --icon-filter: none;
+        }
+        /* Standard dark theme */
+        [data-theme="dark"] {
+            --bg: var(--grey-900);
+            --surface: var(--grey-800);
+            --text: #e8eaf6;
+            --accent: var(--brand-400);
+            --accent-hover: var(--brand-500);
+            --shadow: var(--shadow-dark);
+            --icon-filter: invert(1);
+        }
+        /* Real dark + spotlight */
+        html.real-dark {
+            --bg: #000;
+            --surface: #111;
+            --text: #e8eaf6;
+            --accent: var(--brand-400);
+            --accent-hover: var(--brand-500);
+            --shadow: var(--shadow-dark);
+            --icon-filter: invert(1);
+        }
+        html.real-dark::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            background: radial-gradient(
+                circle 150px at var(--mouse-x) var(--mouse-y),
+                transparent 0%,
+                rgba(0, 0, 0, 0.9) 60%
+            );
+            z-index: 9999;
+            transition: background 0.1s;
+        }
+
+        /* ========= RESET ========= */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            scroll-behavior: smooth;
+            background: var(--bg);
+            color: var(--text);
+        }
+        body {
+            font-family: "Inter", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            position: relative;
+            z-index: 0;
+        }
+        img {
+            max-width: 100%;
+            display: block;
+            filter: var(--icon-filter);
+        }
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        button {
+            font-family: inherit;
+            border: none;
+            cursor: pointer;
+            background: transparent;
+        }
+        section[id] {
+            scroll-margin-top: 88px;
+        }
+
+        /* ========= HEADER ========= */
+        header {
+            background: var(--surface);
+            backdrop-filter: blur(10px) saturate(160%);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .container {
+            width: min(90%, 1280px);
+            margin: auto;
+        }
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: "Playfair Display", serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .brand img {
+            height: 42px;
+            width: auto;
+        }
+
+        /* Nav links */
+        .nav__links {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+        .nav__link {
+            position: relative;
+            font-weight: 500;
+            font-size: 0.94rem;
+            letter-spacing: 0.3px;
+        }
+        .nav__link::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -6px;
+            width: 100%;
+            height: 2px;
+            border-radius: 2px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform var(--transition);
+        }
+        .nav__link:hover,
+        .nav__link:focus {
+            color: var(--accent);
+        }
+        .nav__link:hover::after,
+        .nav__link.active::after {
+            transform: scaleX(1);
+        }
+
+        /* Burger */
+        .burger {
+            display: none;
+            width: 44px;
+            height: 44px;
+            border: 2px solid currentColor;
+            border-radius: 8px;
+            gap: 6px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: background var(--transition);
+        }
+        .burger span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: currentColor;
+            border-radius: 1px;
+            transition: transform var(--transition);
+        }
+        .burger.open span:nth-child(1) {
+            transform: translateY(4px) rotate(45deg);
+        }
+        .burger.open span:nth-child(2) {
+            transform: scaleX(0);
+        }
+        .burger.open span:nth-child(3) {
+            transform: translateY(-4px) rotate(-45deg);
+        }
+
+        /* Mobile drawer */
+        .drawer {
+            display: none;
+            flex-direction: column;
+            gap: 1.5rem;
+            position: fixed;
+            top: 72px;
+            right: 0;
+            width: 260px;
+            padding: 2rem 1.5rem;
+            background: var(--surface);
+            box-shadow: -6px 0 16px rgba(0, 0, 0, 0.15);
+            z-index: 999;
+        }
+        .drawer a {
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        /* Actions */
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+        .btn {
+            padding: 0.6rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-size: 0.9rem;
+            font-weight: 600;
+            background: var(--accent);
+            color: #fff;
+            transition: background var(--transition);
+        }
+        .btn--ghost {
+            background: transparent;
+            border: 1.5px solid var(--accent);
+            color: var(--accent);
+        }
+        .btn:hover {
+            background: var(--accent-hover);
+        }
+        .btn--ghost:hover {
+            background: var(--accent);
+            color: #fff;
+        }
+        .theme-toggle,
+        .spotlight-toggle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid currentColor;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: background var(--transition);
+            background: transparent;
+        }
+        .theme-toggle:hover,
+        .spotlight-toggle:hover {
+            background: rgba(0, 0, 0, 0.07);
+        }
+
+        /* Estilos específicos para la página del mapa */
+        .map-container {
+            display: flex;
+            justify-content: center; /* Centra el iframe horizontalmente */
+            align-items: center; /* Centra el iframe verticalmente (opcional) */
+            min-height: 80vh; /* Ocupa al menos el 80% de la altura de la ventana */
+        }
+
+        .map-title {
+            text-align: center;
+            margin-top: 2rem; /* Separación respecto al menú */
+            margin-bottom: 2rem; /* Separación respecto al mapa */
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body data-theme="dark"> <header>
+        <div class="container nav">
+            <a href="/" class="brand">
+                <span>TRACKZERO</span>
+            </a>
+            <nav>
+                <ul class="nav__links">
+                    <li><a href="/" class="nav__link">Inicio</a></li>
+                    <li><a href="/#verificador" class="nav__link">Verificador</a></li>
+                    <li><a href="/#recursos" class="nav__link">Servicios</a></li>
+                    <li><a href="/#mapa" class="nav__link active">Mapa</a></li> </ul>
+            </nav>
+            <div class="actions">
+                </div>
+        </div>
+    </header>
+
+    <div>
+        <h2 class="section-title map-title">Mapa Mundial de ciberamenazas / vulnerabilidades</h2>
+    </div>
+
+    <main class="container map-container">
+        <iframe width="1450" height="700" src="https://cybermap.kaspersky.com/es/widget/dynamic/dark" frameborder="0"></iframe>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 TRACKZERO. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    </body>
+</html>
