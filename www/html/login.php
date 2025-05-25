@@ -12,7 +12,7 @@ header('Referrer-Policy: no-referrer');
  |  Sesión protegida
  *-----------------------------------------------------*/
 session_set_cookie_params([
-    'secure'   => false,    // ← pon true cuando uses HTTPS
+    'secure'   => false,    // ← ponemos true cuando se use HTTPS
     'httponly' => true,
     'samesite' => 'Strict'
 ]);
