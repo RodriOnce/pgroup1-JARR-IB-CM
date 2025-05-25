@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador de Contraseñas o Frases | Trackzero</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #3146b4;
+      --secondary: #5366e3;
+      --background: #f9fafc;
+      --text: #212529;
+      --card-bg: #ffffff;
+      --success: #28a745;
+      --danger: #dc3545;
+      --result-bg: #eaf0fb;
+    }
+    [data-theme="dark"] {
+      --primary: #7f8cff;
+      --secondary: #5366e3;
+      --background: #181b22;
+      --text: #f9fafc;
+      --card-bg: #23253a;
+      --result-bg: #21233b;
+    }
+    html, body {
+      background: linear-gradient(135deg, var(--primary), #141831 90%);
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', Arial, sans-serif;
+      color: var(--text);
+      transition: background 0.3s, color 0.3s;
+    }
+    .container {
+      background-color: var(--card-bg);
+      border-radius: 22px;
+      box-shadow: 0 8px 32px 0 rgba(49, 70, 180, 0.14);
+      padding: 2.2rem 1.3rem 2rem 1.3rem;
+      margin: 2.5rem auto;
+      max-width: 480px;
+      min-width: 0;
+      transition: background 0.3s, color 0.3s;
+      position: relative;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1.3rem;
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--primary);
+      border-bottom: 1.5px solid #e5e8f2;
+      padding-bottom: 0.7rem;
+      letter-spacing: 1px;
+    }
+    .radio-options {
+      display: flex;
+      justify-content: center;
+      gap: 1.3rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.7rem;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .form-check-input[type=radio] {
+      accent-color: var(--primary);
+      width: 1.1em;
+      height: 1.1em;
+      margin-top: 0;
+      margin-right: 4px;
+      vertical-align: middle;
+      cursor: pointer;
+    }
+    .form-check-label {
+      font-size: 1rem;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .input-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.85rem;
+      gap: 0.7rem;
+    }
+    .input-group label {
+      min-width: 116px;
+      text-align: left;
+      font-weight: 500;
+      font-size: 1.01rem;
+      color: var(--primary);
+    }
+    .form-control {
+      width: 90px;
+      border-radius: 10px;
+      border: 1.5px solid var(--secondary);
+      padding: 0.63rem 0.8rem;
+      font-size: 1rem;
+      background: var(--background);
+      color: var(--text);
+      transition: border-color 0.18s;
+      outline: none;
+    }
+    .form-control:focus {
+      border-color: var(--primary);
+    }
+    .btn-primary {
+      width: 100%;
+      padding: 0.74rem;
+      margin-top: 0.7rem;
+      background-color: var(--primary);
+      border: none;
+      border-radius: 13px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.09rem;
+      box-shadow: 0 2px 8px 0 rgba(49, 70, 180, 0.08);
+      cursor: pointer;
+      transition: background 0.17s, transform 0.13s;
+    }
+    .btn-primary:hover, .btn-primary:focus {
+      background-color: var(--secondary);
+      transform: translateY(-1.5px) scale(1.015);
+    }
+    .btn-secondary {
+      background-color: var(--secondary);
+      border: none;
+      color: #fff;
+      border-radius: 10px;
+      padding: 0.55rem 1.1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: background 0.15s;
+      margin-top: 0.2rem;
+      cursor: pointer;
+    }
+    .btn-secondary:hover {
+      background-color: var(--primary);
+    }
+    .btn-sm.btn-outline-secondary {
+      background: transparent;
+      color: var(--primary);
+      border: 1.3px solid var(--primary);
+      font-weight: 600;
+      padding: 0.35rem 0.6rem;
+      font-size: 0.93rem;
+      border-radius: 8px;
+      margin-left: 0.6rem;
+      transition: background 0.15s, color 0.15s, border 0.15s;
+    }
+    .btn-sm.btn-outline-secondary:hover {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--secondary);
+    }
+    h2 {
+      font-size: 1.18rem;
+      margin-top: 1.3rem;
+      border-bottom: 1px solid #e0e0e0;
+      padding-bottom: 0.5rem;
+      color: var(--secondary);
+      font-weight: 700;
+      text-align: left;
+      margin-bottom: 0.9rem;
+    }
+    #resultado-container {
+      background-color: var(--result-bg);
+      border-radius: 11px;
+      padding: 0.53rem 1rem 0.53rem 0.7rem;
+      margin-top: 0.3rem;
+      margin-bottom: 1rem;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 48px;
+      overflow-x: auto;
+      max-width: 100%;
+    }
+    #resultado-container pre {
+      margin: 0;
+      font-size: 1.07rem;
+      flex-grow: 1;
+      background: transparent;
+      color: var(--text);
+      font-family: 'Montserrat', 'Consolas', monospace;
+      letter-spacing: 1px;
+      user-select: all;
+      white-space: pre-wrap;
+      word-break: break-all;
+      min-width: 0;
+      max-width: 70vw;
+    }
+    #copiado-notificacion {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--primary);
+      color: white;
+      padding: 0.62rem 1.2rem;
+      border-radius: 7px;
+      font-size: 1rem;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 200;
+      pointer-events: none;
+    }
+    #volver-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 1.2rem;
+    }
+    @media (max-width: 600px) {
+      .container {
+        padding: 1.1rem 0.4rem;
+        max-width: 98vw;
+      }
+      #resultado-container pre {
+        max-width: 65vw;
+        font-size: 0.97rem;
+      }
+    }
+    .theme-switch {
+      position: absolute;
+      top: 17px;
+      right: 18px;
+      cursor: pointer;
+      background: var(--card-bg);
+      color: var(--primary);
+      border: 1.5px solid var(--secondary);
+      padding: 7px 13px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      transition: background 0.25s, color 0.25s;
+      z-index: 3;
+    }
+    .theme-switch:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button class="theme-switch" onclick="toggleTheme()">🌙 / ☀️</button>
+    <h1>Generador de Contraseñas o Frases</h1>
+
+    <div class="radio-options">
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="modo" value="pass" checked>
+        <label class="form-check-label">Contraseña</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="modo" value="frase">
+        <label class="form-check-label">Frase</label>
+      </div>
+    </div>
+
+    <form>
+      <div id="pass-options">
+        <div class="input-group">
+          <label for="longitud">Longitud total</label>
+          <input type="number" id="longitud" class="form-control" value="12" min="6" max="50">
+        </div>
+        <div class="input-group">
+          <label for="mayus">Mayúsculas</label>
+          <input type="number" id="mayus" class="form-control" value="2" min="0" max="20">
+        </div>
+        <div class="input-group">
+          <label for="minus">Minúsculas</label>
+          <input type="number" id="minus" class="form-control" value="4" min="0" max="20">
+        </div>
+        <div class="input-group">
+          <label for="nums">Números</label>
+          <input type="number" id="nums" class="form-control" value="3" min="0" max="20">
+        </div>
+        <div class="input-group">
+          <label for="symbols">Símbolos</label>
+          <input type="number" id="symbols" class="form-control" value="3" min="0" max="20">
+        </div>
+      </div>
+
+      <div id="frase-options" style="display:none;">
+        <div class="input-group">
+          <label for="numPalabras">Número de palabras</label>
+          <input type="number" id="numPalabras" class="form-control" value="4" min="2" max="70">
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="generar()">Generar</button>
+    </form>
+
+    <h2>Resultado:</h2>
+    <div id="resultado-container">
+      <pre id="resultado"></pre>
+      <button type="button" class="btn btn-sm btn-outline-secondary" onclick="copiarResultado()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+          <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h1v-1z"/>
+          <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3z"/>
+        </svg>
+      </button>
+    </div>
+    <div id="copiado-notificacion">
+      ¡Copiado!
+    </div>
+
+    <div id="volver-container">
+      <button type="button" class="btn btn-secondary" onclick="volver()">Volver</button>
+    </div>
+  </div>
+
+  <script>
+    const palabras = [
+      "automovil", "desarrollo", "programacion", "computadora", "tecnologia", "bateria",
+      "electricidad", "computing", "aplicaciones", "desplazamiento", "despertador",
+      "informatico", "instrucciones", "configuracion", "paisajismo", "estrategia", "estructura",
+      "circuitos", "desarrollador", "desglosar", "entrenamiento", "matematica", "profesorado",
+      "inteligencia", "escalera", "espectacular", "programador", "funcionalidad",
+      "reconocimiento", "mejoramiento", "procesador", "colaboracion", "manipulacion",
+      "industria", "sostenibilidad", "hardware", "software", "comunicacion", "seguridad",
+      "arquitectura", "construccion", "importante", "precaucion", "acelerador", "despliegue",
+      "sostenible", "configurar", "escritura", "documentacion", "herramientas", "entorno"
+    ];
+
+    function generarContraseña(longitud, mayus, minus, nums, symbols) {
+      const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const lower = "abcdefghijklmnopqrstuvwxyz";
+      const numbers = "0123456789";
+      const symbs = "!@#$%&*+-_?";
+
+      if (mayus + minus + nums + symbols > longitud) return "⚠️ La suma de tipos excede la longitud.";
+
+      // Saca la cantidad exacta de cada tipo
+      let chars = [
+        ...getRandom(upper, mayus),
+        ...getRandom(lower, minus),
+        ...getRandom(numbers, nums),
+        ...getRandom(symbs, symbols)
+      ];
+
+      // Si falta completar hasta la longitud, rellena con minúsculas extra
+      let resto = longitud - chars.length;
+      if (resto > 0) {
+        chars.push(...getRandom(lower, resto));
+      }
+
+      return shuffle(chars).join('');
+    }
+
+    function generarFrase(n) {
+      let frase = [];
+      for (let i = 0; i < n; i++) {
+        frase.push(palabras[Math.floor(Math.random() * palabras.length)]);
+      }
+      return frase.join('-');
+    }
+
+    function getRandom(str, count) {
+      return Array.from({length: count}, () => str[Math.floor(Math.random() * str.length)]);
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function generar() {
+      const modo = document.querySelector('input[name=modo]:checked').value;
+      let resultado = '';
+      if (modo === 'pass') {
+        const l = +document.getElementById('longitud').value;
+        const m = +document.getElementById('mayus').value;
+        const mi = +document.getElementById('minus').value;
+        const n = +document.getElementById('nums').value;
+        const s = +document.getElementById('symbols').value;
+
+        if (m + mi + n + s > l) {
+          resultado = "⚠️ La suma de mayúsculas, minúsculas, números y símbolos no puede ser mayor que la longitud total.";
+        } else {
+          resultado = generarContraseña(l, m, mi, n, s);
+        }
+      } else {
+        const num = +document.getElementById('numPalabras').value;
+        resultado = generarFrase(num);
+      }
+      document.getElementById('resultado').textContent = resultado;
+    }
+
+    function volver() {
+      window.location.href = 'index.html';
+    }
+
+    function copiarResultado() {
+      const resultadoTexto = document.getElementById('resultado').textContent;
+      const notificacion = document.getElementById('copiado-notificacion');
+
+      const copiarTexto = (texto) => {
+        if (navigator.clipboard) {
+          return navigator.clipboard.writeText(texto);
+        } else {
+          const tempInput = document.createElement('textarea');
+          tempInput.value = texto;
+          document.body.appendChild(tempInput);
+          tempInput.select();
+          document.execCommand('copy');
+          document.body.removeChild(tempInput);
+          return Promise.resolve();
+        }
+      };
+
+      copiarTexto(resultadoTexto)
+        .then(() => {
+          notificacion.style.opacity = 1;
+          setTimeout(() => {
+            notificacion.style.opacity = 0;
+          }, 1500);
+        })
+        .catch(err => {
+          alert('No se pudo copiar al portapapeles.');
+        });
+    }
+
+    document.querySelectorAll('input[name=modo]').forEach(el => {
+      el.addEventListener('change', () => {
+        document.getElementById('pass-options').style.display = el.value === 'pass' ? 'block' : 'none';
+        document.getElementById('frase-options').style.display = el.value === 'frase' ? 'block' : 'none';
+      });
+    });
+
+    function toggleTheme() {
+      let html = document.documentElement;
+      let theme = html.getAttribute('data-theme');
+      if (theme === 'dark') {
+        html.setAttribute('data-theme', 'light');
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+    window.onload = function() {
+      let saved = localStorage.getItem('theme');
+      if (saved) document.documentElement.setAttribute('data-theme', saved);
+    }
+  </script>
+</body>
+</html>
