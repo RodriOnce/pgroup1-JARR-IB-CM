@@ -183,7 +183,8 @@ For MongoDB installation using Docker, refer to the document `Docker_Mongo.pdf` 
 
 All files and folders are located in the `/var/www/html/` directory. Below is an example image showing the permissions and ownership setup:
 
-![File and Folder Permissions](https://github.com/user-attachments/assets/eab73461-dff7-4ee1-9774-84c339392c10)
+![imagen](https://github.com/user-attachments/assets/ab9a96ae-97af-4f7b-9b5f-4b13292353d5)
+
 
 ---
 
