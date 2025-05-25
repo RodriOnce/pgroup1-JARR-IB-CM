@@ -6,7 +6,7 @@
     <title>Centro de Ayuda | Trackzero</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&display=swap" rel="stylesheet">
     <style>
-        :root {
+        :root { /* Variables colores base */
             --primary: #3146b4;
             --secondary: #5366e3;
             --background: #f9fafc;
@@ -14,7 +14,7 @@
             --card-bg: #ffffff;
             --result-bg: #eaf0fb;
         }
-        [data-theme="dark"] {
+        [data-theme="dark"] { /* Variables modo oscuro */
             --primary: #7f8cff;
             --secondary: #5366e3;
             --background: #181b22;
@@ -22,7 +22,7 @@
             --card-bg: #23253a;
             --result-bg: #21233b;
         }
-        body {
+        body { /* Estilos body generales */
             font-family: 'Montserrat', Arial, sans-serif;
             background: linear-gradient(135deg, var(--primary), #141831 90%);
             color: var(--text);
@@ -30,7 +30,7 @@
             padding: 0;
             transition: background 0.3s, color 0.3s;
         }
-        .container {
+        .container { /* Caja principal contenido */
             max-width: 720px;
             margin: 48px auto;
             background: var(--card-bg);
@@ -39,7 +39,7 @@
             box-shadow: 0 8px 32px 0 rgba(49, 70, 180, 0.10);
             transition: background 0.3s, color 0.3s;
         }
-        h1 {
+        h1 { /* Título central */
             font-size: 2.1rem;
             color: var(--primary);
             text-align: center;
@@ -49,10 +49,10 @@
             border-bottom: 1.5px solid #e5e8f2;
             padding-bottom: 0.7rem;
         }
-        .faq {
+        .faq { /* Cada bloque pregunta */
             margin-bottom: 16px;
         }
-        .question {
+        .question { /* Botón pregunta */
             background: var(--primary);
             color: #fff;
             padding: 13px 18px;
@@ -67,11 +67,11 @@
             margin-bottom: 0;
             transition: background 0.2s, color 0.2s;
         }
-        .question:hover, .question.active {
+        .question:hover, .question.active { /* Hover/activa pregunta */
             background: var(--secondary);
             color: #fff;
         }
-        .answer {
+        .answer { /* Respuesta oculta */
             display: none;
             padding: 18px 18px 6px 18px;
             background: var(--result-bg);
@@ -83,22 +83,22 @@
             text-align: left;
             box-shadow: 0 1px 3px rgba(49, 70, 180, 0.04);
         }
-        .faq.open .answer {
+        .faq.open .answer { /* Mostrar respuesta */
             display: block;
             animation: fadeIn 0.33s;
         }
 
-        #volver-container {
+        #volver-container { /* Contenedor botón volver */
             display: flex;
             justify-content: center;
             margin-top: 1.2rem;
         }
 
-        @keyframes fadeIn {
+        @keyframes fadeIn { /* Animación respuesta */
             from {opacity:0;}
             to {opacity:1;}
         }
-        .theme-switch {
+        .theme-switch { /* Botón tema cambio */
             position: absolute;
             top: 26px;
             right: 38px;
@@ -113,11 +113,11 @@
             transition: background 0.25s, color 0.25s;
             z-index: 3;
         }
-        .theme-switch:hover {
+        .theme-switch:hover { /* Hover tema botón */
             background: var(--primary);
             color: #fff;
         }
-        @media (max-width: 600px) {
+        @media (max-width: 600px) { /* Responsive móvil */
             .container { padding: 1.2rem 0.2rem; }
             h1 { font-size: 1.4rem; }
             .theme-switch { right: 18px; top: 16px; }
@@ -231,8 +231,8 @@
         document.querySelectorAll(".question").forEach(button => {
             button.addEventListener("click", () => {
                 const parent = button.parentElement;
-                parent.classList.toggle("open");
-                button.classList.toggle("active");
+                parent.classList.toggle("open"); // Mostrar respuesta FAQ
+                button.classList.toggle("active"); // Cambiar color pregunta
             });
         });
 
@@ -242,19 +242,19 @@
             let theme = html.getAttribute('data-theme');
             if (theme === 'dark') {
                 html.setAttribute('data-theme', 'light');
-                localStorage.setItem('theme', 'light');
+                localStorage.setItem('theme', 'light'); // Guardar tema claro
             } else {
                 html.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
+                localStorage.setItem('theme', 'dark'); // Guardar tema oscuro
             }
         }
         window.onload = function() {
             let saved = localStorage.getItem('theme');
-            if (saved) document.documentElement.setAttribute('data-theme', saved);
+            if (saved) document.documentElement.setAttribute('data-theme', saved); // Cargar tema guardado
         }
 
         function volver() {
-            window.location.href = 'inicio-1.php';
+            window.location.href = 'inicio-1.php'; // Volver a inicio
         }
 
     </script>
