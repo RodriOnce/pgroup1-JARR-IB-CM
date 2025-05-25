@@ -332,35 +332,35 @@
     </div>
 
     <script>
-        /* --------- Solicita token CSRF y lo inserta en el formulario --------- */
-        fetch('csrf_token.php', { credentials: 'same-origin' })
+        /* --------- Solicita token CSRF y lo inserta en el formulario. Todo esto para pedir un token CSRF al servidor y colocarlo en el formulario para protegerlo contra ataques. --------- */
+        fetch('csrf_token.php', { credentials: 'same-origin' }) // Pide token CSRF al backend
             .then(function (response) {
-                if (!response.ok) {
+                if (!response.ok) { // Si la respuesta de red falla
                     throw new Error('Network response was not ok ' + response.statusText);
                 }
-                return response.json();
+                return response.json(); // Convierte la respuesta a objeto JSON
             })
             .then(function (data) {
-                if (data && data.token) {
-                    document.getElementById('csrfField').value = data.token;
+                if (data && data.token) { // Si el JSON tiene token
+                    document.getElementById('csrfField').value = data.token; // Pone el token en el campo oculto del formulario
                 } else {
-                    console.error('Token CSRF no encontrado en la respuesta:', data);
-                    alert('Error al obtener el token de seguridad: Formato inválido.');
+                    console.error('Token CSRF no encontrado en la respuesta:', data); // Error: no hay token en la respuesta
+                    alert('Error al obtener el token de seguridad: Formato inválido.'); // Alerta de error de formato
                 }
             })
             .catch(function (error) {
-                console.error('Error al obtener el token de seguridad:', error);
-                alert('Error al obtener el token de seguridad: ' + error.message);
+                console.error('Error al obtener el token de seguridad:', error); // Error en la petición
+                alert('Error al obtener el token de seguridad: ' + error.message); // Alerta con el mensaje de error
             });
 
         /* --------- Modo oscuro / claro --------- */
         function toggleDarkMode() {
             var body = document.body;
-            var newTheme = (body.dataset.theme === 'light') ? 'dark' : 'light';
-            body.dataset.theme = newTheme;
+            var newTheme = (body.dataset.theme === 'light') ? 'dark' : 'light'; // Cambia tema
+            body.dataset.theme = newTheme; // Aplica nuevo tema
 
             var button = document.querySelector('.dark-mode-toggle');
-            button.textContent = (newTheme === 'light') ? 'Modo Oscuro' : 'Modo Claro';
+            button.textContent = (newTheme === 'light') ? 'Modo Oscuro' : 'Modo Claro'; // Cambia texto botón
         }
     </script>
 </body>
