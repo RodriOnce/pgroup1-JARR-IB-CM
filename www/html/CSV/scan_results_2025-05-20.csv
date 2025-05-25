@@ -1,0 +1,9 @@
+filename,file_id,status,malicious,harmless,suspicious,undetected,date,time,user,final_path
+seguro.txt,NDRkODg2MTJmZWE4YThmMzZkZTgyZTEyNzhhYmIwMmY6MTc0Nzc1NTEwMA==,infected,66,0,0,3,2025-05-20,15:36:50,www-data,/var/www/html/infectado/seguro.txt
+Ord..pdf,ZjNiMTk4ZDQ1OGRjMDZlNmNkZDA0YjIzYWQ3Yzg5YjY6MTc0Nzc1NjQzMw==,safe,0,0,0,64,2025-05-20,15:54:41,Momo,/var/www/html/archivos/Momo/Ord..pdf
+Aval-5.pdf,NDhmYzgyNDU3MjA3OTFhMzUwYzZlNzRhNThiNmVkMDU6MTc0Nzc2MDYzOQ==,safe,0,0,0,64,2025-05-20,17:04:48,www-data,/var/www/html/sano/Aval-5.pdf
+Ord..pdf,ZjNiMTk4ZDQ1OGRjMDZlNmNkZDA0YjIzYWQ3Yzg5YjY6MTc0Nzc2MDY4OQ==,safe,0,0,0,64,2025-05-20,17:05:33,www-data,/var/www/html/sano/Ord..pdf
+PAC1-M11-CarolinaMoreno.pdf,M2NlOWM5MzU0N2YxYTMwYTFjYTM0YjdhZGQ0ODFmMTY6MTc0Nzc2MDczNA==,safe,0,0,0,64,2025-05-20,17:05:57,www-data,/var/www/html/sano/PAC1-M11-CarolinaMoreno.pdf
+CSI2_ASO_UF2_OS1.pdf,NTg3MTYwNWQxZmM5OThlMzMyMzRmNTU0YjAyNTRjM2U6MTc0Nzc2MDc1OA==,safe,0,0,0,64,2025-05-20,17:06:42,www-data,/var/www/html/sano/CSI2_ASO_UF2_OS1.pdf
+javamuTFG0624memoria.pdf,OTUyMTRiMTkxYWEyZmE1NDE0YjY1MGQ4OGZkODIwZmU6MTc0Nzc2MDgwNQ==,safe,0,0,0,64,2025-05-20,17:07:35,www-data,/var/www/html/sano/javamuTFG0624memoria.pdf
+hola.txt,ZWZhZWE5ZTJkNzdjM2E2ZGFjMmM4MzQ1MDBmNzhkN2U6MTc0Nzc2MDk0NA==,safe,0,0,0,62,2025-05-20,17:09:53,www-data,/var/www/html/sano/hola.txt

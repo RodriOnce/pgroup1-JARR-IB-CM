@@ -1,0 +1,7 @@
+filename,file_id,status,malicious,harmless,suspicious,undetected,date,time,user,final_path
+NTLM+HashCat.pdf,MzAxOWUwOTdhZmY1YjQ3NTFhZmRlYTFhZTc5NzEyMTk6MTc0MTMwMzUwMA==,safe,0,0,0,63,2025-03-06,23:34:31,Rodri,/var/www/html/archivos/Rodri/NTLM+HashCat.pdf
+NTLM+HashCat.pdf,MzAxOWUwOTdhZmY1YjQ3NTFhZmRlYTFhZTc5NzEyMTk6MTc0MTMwMzUwMA==,safe,0,0,0,63,2025-03-06,23:34:39,Rodri,/var/www/html/archivos/Rodri/NTLM+HashCat.pdf
+Aval-5.pdf,NDhmYzgyNDU3MjA3OTFhMzUwYzZlNzRhNThiNmVkMDU6MTc0MTMwMzQ1Mg==,safe,0,0,0,63,2025-03-06,23:36:51,IvanB,/var/www/html/archivos/IvanB/Aval-5.pdf
+NTLM+HashCat.pdf,MzAxOWUwOTdhZmY1YjQ3NTFhZmRlYTFhZTc5NzEyMTk6MTc0MTMwMzUwMA==,safe,0,0,0,63,2025-03-06,23:36:52,Rodri,/var/www/html/archivos/Rodri/NTLM+HashCat.pdf
+Aval-5.pdf,NDhmYzgyNDU3MjA3OTFhMzUwYzZlNzRhNThiNmVkMDU6MTc0MTMwMzQ1Mg==,safe,0,0,0,63,2025-03-06,23:36:59,IvanB,/var/www/html/archivos/IvanB/Aval-5.pdf
+NTLM+HashCat.pdf,MzAxOWUwOTdhZmY1YjQ3NTFhZmRlYTFhZTc5NzEyMTk6MTc0MTMwMzUwMA==,safe,0,0,0,63,2025-03-06,23:37:01,Rodri,/var/www/html/archivos/Rodri/NTLM+HashCat.pdf

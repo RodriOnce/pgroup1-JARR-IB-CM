@@ -1,0 +1,18 @@
+filename,file_id,status,malicious,harmless,suspicious,undetected,date,time,user,final_path
+API-VIRUS_V3.docx,NjBhODEzNDkxMzllYTAzZWY2Y2NhM2NjNTg2NWQ0OGQ6MTczNzU1NjYzMw==,safe,0,0,0,66,2025-01-22,14:38:01,www-data,/var/www/html/sano/API-VIRUS_V3.docx
+cyber.txt,YzBiNGY4YTgwZGQxYmU2NTg0MTM2MDQ3MzZmZTJmYjg6MTczNzU1NjY4Mg==,safe,0,0,0,60,2025-01-22,14:38:34,www-data,/var/www/html/sano/cyber.txt
+bbdd.txt,MTBlNjAzMTJjY2UxMDY5MzlhMTkyOTE0Y2RlMzY2Njk6MTczNzU1NjcxNQ==,safe,0,0,0,60,2025-01-22,14:40:09,www-data,/var/www/html/sano/bbdd.txt
+bbdd.txt,MTBlNjAzMTJjY2UxMDY5MzlhMTkyOTE0Y2RlMzY2Njk6MTczNzU1NzU3NQ==,safe,0,0,0,61,2025-01-22,14:53:42,www-data,/var/www/html/sano/bbdd.txt
+Documentación de la Memoria_GRUPO 01_JARR_CM_IBH.pdf,ODY2MTViOGNmMTY3YzgyMjRhOTBmZjY4NTFiZmU4ZjE6MTczNzU2MjM3Ng==,safe,0,0,0,63,2025-01-22,16:13:16,www-data,/var/www/html/sano/Documentación de la Memoria_GRUPO 01_JARR_CM_IBH.pdf
+Documentación de la Memoria_GRUPO 01_JARR_CM_IBH.pdf,ODY2MTViOGNmMTY3YzgyMjRhOTBmZjY4NTFiZmU4ZjE6MTczNzU2MjM3Ng==,safe,0,0,0,63,2025-01-22,16:13:17,www-data,/var/www/html/sano/Documentación de la Memoria_GRUPO 01_JARR_CM_IBH.pdf
+Documentación de la Memoria_GRUPO 01_JARR_CM_IBH.pdf,ODY2MTViOGNmMTY3YzgyMjRhOTBmZjY4NTFiZmU4ZjE6MTczNzU2MjM3Ng==,safe,0,0,0,63,2025-01-22,16:13:17,www-data,/var/www/html/sano/Documentación de la Memoria_GRUPO 01_JARR_CM_IBH.pdf
+Documentación de la Memoria_GRUPO 01_JARR_CM_IBH.pdf,ODY2MTViOGNmMTY3YzgyMjRhOTBmZjY4NTFiZmU4ZjE6MTczNzU2MjM3Ng==,safe,0,0,0,63,2025-01-22,16:13:18,www-data,/var/www/html/sano/Documentación de la Memoria_GRUPO 01_JARR_CM_IBH.pdf
+Documentación de la Memoria_GRUPO 01_JARR_CM_IBH.pdf,ODY2MTViOGNmMTY3YzgyMjRhOTBmZjY4NTFiZmU4ZjE6MTczNzU2MjM3Ng==,safe,0,0,0,63,2025-01-22,16:13:19,www-data,/var/www/html/sano/Documentación de la Memoria_GRUPO 01_JARR_CM_IBH.pdf
+Documentación de la Memoria_GRUPO 01_JARR_CM_IBH.pdf,ODY2MTViOGNmMTY3YzgyMjRhOTBmZjY4NTFiZmU4ZjE6MTczNzU2MjM3Ng==,safe,0,0,0,63,2025-01-22,16:13:19,www-data,/var/www/html/sano/Documentación de la Memoria_GRUPO 01_JARR_CM_IBH.pdf
+Documentación de la Memoria_GRUPO 01_JARR_CM_IBH.pdf,ODY2MTViOGNmMTY3YzgyMjRhOTBmZjY4NTFiZmU4ZjE6MTczNzU2MjM3Ng==,safe,0,0,0,63,2025-01-22,16:13:20,www-data,/var/www/html/sano/Documentación de la Memoria_GRUPO 01_JARR_CM_IBH.pdf
+Documentación de la Memoria_GRUPO 01_JARR_CM_IBH.pdf,ODY2MTViOGNmMTY3YzgyMjRhOTBmZjY4NTFiZmU4ZjE6MTczNzU2MjM3Ng==,safe,0,0,0,63,2025-01-22,16:13:20,www-data,/var/www/html/sano/Documentación de la Memoria_GRUPO 01_JARR_CM_IBH.pdf
+Documentación de la Memoria_GRUPO 01_JARR_CM_IBH.pdf,ODY2MTViOGNmMTY3YzgyMjRhOTBmZjY4NTFiZmU4ZjE6MTczNzU2MjM3Ng==,safe,0,0,0,63,2025-01-22,16:13:21,www-data,/var/www/html/sano/Documentación de la Memoria_GRUPO 01_JARR_CM_IBH.pdf
+YearOfTheFOX-CarolinaMoreno.pdf,Y2M0MWQ0OWI0ZGUzYzZmMmUwNDg3YzBjMmFjMTQwYmE6MTczNzU2MjU5MQ==,safe,0,0,0,63,2025-01-22,16:17:54,www-data,/var/www/html/sano/YearOfTheFOX-CarolinaMoreno.pdf
+YearOfTheFOX-CarolinaMoreno.pdf,Y2M0MWQ0OWI0ZGUzYzZmMmUwNDg3YzBjMmFjMTQwYmE6MTczNzU2NTcyNQ==,safe,0,0,0,63,2025-01-22,17:09:16,www-data,/var/www/html/sano/YearOfTheFOX-CarolinaMoreno.pdf
+script.py,NTk0NjdjMzM1NGNiZjRjNmFlNjM4MWI1Yjc0NGRhZGE6MTczNzU3MDc1MA==,safe,0,0,0,60,2025-01-22,18:33:48,www-data,/var/www/html/sano/script.py
+[UD2] Actividad 2.pdf,NDM5Yzk5NjhlZGY0MTczYzljOTAyY2ZhMWFjZmZiMTU6MTczNzU3MjQ5OA==,safe,0,0,0,62,2025-01-22,19:02:30,www-data,/var/www/html/sano/[UD2] Actividad 2.pdf

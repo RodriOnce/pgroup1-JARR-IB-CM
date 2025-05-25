@@ -1,0 +1,57 @@
+filename,file_id,status,malicious,harmless,suspicious,undetected,date,time,user,final_path
+Actividad-1_Expertos_BBDD.pdf,YjExNmE0ODc3MGQ0MjAxMGNkMWQxNDBmOGFlYTU4NTk6MTczNzcyMTc5Mw==,safe,0,0,0,63,2025-01-24,12:32:44,www-data,/var/www/html/sano/Actividad-1_Expertos_BBDD.pdf
+Estudio de Mercado - Entrega Fase 0.pdf,N2M3YjVjNTk5MzViZDNmMGVlZGQxYzk5MDk4YTdlMmM6MTczNzcyNjQ5OQ==,safe,0,0,0,57,2025-01-24,13:51:11,www-data,/var/www/html/sano/Estudio de Mercado - Entrega Fase 0.pdf
+Estudio de Mercado - Entrega Fase 0.pdf,N2M3YjVjNTk5MzViZDNmMGVlZGQxYzk5MDk4YTdlMmM6MTczNzcyNjQ5OQ==,safe,0,0,0,57,2025-01-24,13:55:26,www-data,/var/www/html/sano/Estudio de Mercado - Entrega Fase 0.pdf
+YearOfTheFOX-CarolinaMoreno.pdf,Y2M0MWQ0OWI0ZGUzYzZmMmUwNDg3YzBjMmFjMTQwYmE6MTczNzcyOTI2Nw==,safe,0,0,0,62,2025-01-24,14:37:03,www-data,/var/www/html/sano/YearOfTheFOX-CarolinaMoreno.pdf
+adios.txt,MWQ2ZTE3MzNiZDJmMDUzYzFmYjkzNDc1ZDY4OTUxZDk6MTczNzcyOTcxNg==,safe,0,0,0,61,2025-01-24,14:43:14,www-data,/var/www/html/sano/adios.txt
+hola.txt,NGFlOTkxM2Q3MGVhMmU4ZDQxNzJjMGFjMWFiYmI0NDE6MTczNzcyOTc5NQ==,safe,0,0,0,61,2025-01-24,14:43:47,www-data,/var/www/html/sano/hola.txt
+adios.txt,MWQ2ZTE3MzNiZDJmMDUzYzFmYjkzNDc1ZDY4OTUxZDk6MTczNzczMzAzNQ==,safe,0,0,0,61,2025-01-24,15:37:46,www-data,/var/www/html/sano/adios.txt
+hola.txt,NGFlOTkxM2Q3MGVhMmU4ZDQxNzJjMGFjMWFiYmI0NDE6MTczNzczMzA2Nw==,safe,0,0,0,61,2025-01-24,15:39:05,www-data,/var/www/html/sano/hola.txt
+Nuevo documento de texto.txt,ODJiNGZlNDBiZTZiNjFjZjY2OWRjZDY4YzBhOTg5MGM6MTczNzczMzE0NQ==,safe,0,0,0,61,2025-01-24,15:39:53,www-data,/var/www/html/sano/Nuevo documento de texto.txt
+adios.txt,MWQ2ZTE3MzNiZDJmMDUzYzFmYjkzNDc1ZDY4OTUxZDk6MTczNzczMzc3OA==,safe,0,0,0,61,2025-01-24,15:50:10,www-data,/var/www/html/sano/adios.txt
+hola.txt,NGFlOTkxM2Q3MGVhMmU4ZDQxNzJjMGFjMWFiYmI0NDE6MTczNzczMzA2Nw==,safe,0,0,0,61,2025-01-24,15:50:11,www-data,/var/www/html/sano/hola.txt
+Nuevo documento de texto.txt,ODJiNGZlNDBiZTZiNjFjZjY2OWRjZDY4YzBhOTg5MGM6MTczNzczMzgxMg==,safe,0,0,0,61,2025-01-24,15:51:45,www-data,/var/www/html/sano/Nuevo documento de texto.txt
+adios.txt,MWQ2ZTE3MzNiZDJmMDUzYzFmYjkzNDc1ZDY4OTUxZDk6MTczNzczMzc3OA==,safe,0,0,0,61,2025-01-24,15:56:16,www-data,/var/www/html/sano/adios.txt
+hola.txt,NGFlOTkxM2Q3MGVhMmU4ZDQxNzJjMGFjMWFiYmI0NDE6MTczNzczNDE3Ng==,safe,0,0,0,48,2025-01-24,15:59:23,www-data,/var/www/html/sano/hola.txt
+Nuevo documento de texto.txt,ODJiNGZlNDBiZTZiNjFjZjY2OWRjZDY4YzBhOTg5MGM6MTczNzczMzgxMg==,safe,0,0,0,61,2025-01-24,15:59:24,www-data,/var/www/html/sano/Nuevo documento de texto.txt
+importar.txt,MzI3YWYwYzgyNTUzOTU5YmQ5OTUxNzgwYzc4ODc1OGY6MTczNzc0OTc5Ng==,safe,0,0,0,62,2025-01-24,20:17:08,www-data,/var/www/html/sano/importar.txt
+importar.txt,MzI3YWYwYzgyNTUzOTU5YmQ5OTUxNzgwYzc4ODc1OGY6MTczNzc0OTc5Ng==,safe,0,0,0,62,2025-01-24,20:25:01,www-data,/var/www/html/sano/importar.txt
+importar.txt,MzI3YWYwYzgyNTUzOTU5YmQ5OTUxNzgwYzc4ODc1OGY6MTczNzc0OTc5Ng==,safe,0,0,0,62,2025-01-24,20:25:45,www-data,/var/www/html/sano/importar.txt
+adios.txt,MWQ2ZTE3MzNiZDJmMDUzYzFmYjkzNDc1ZDY4OTUxZDk6MTczNzc1MDQwNA==,safe,0,0,0,61,2025-01-24,20:27:16,www-data,/var/www/html/sano/adios.txt
+hola.txt,NGFlOTkxM2Q3MGVhMmU4ZDQxNzJjMGFjMWFiYmI0NDE6MTczNzc1MDQzOQ==,safe,0,0,0,61,2025-01-24,20:29:40,www-data,/var/www/html/sano/hola.txt
+Nuevo documento de texto.txt,ODJiNGZlNDBiZTZiNjFjZjY2OWRjZDY4YzBhOTg5MGM6MTczNzc1MDU4MA==,safe,0,0,0,60,2025-01-24,20:30:28,www-data,/var/www/html/sano/Nuevo documento de texto.txt
+adios.txt,MWQ2ZTE3MzNiZDJmMDUzYzFmYjkzNDc1ZDY4OTUxZDk6MTczNzc1MDQwNA==,safe,0,0,0,61,2025-01-24,20:34:31,www-data,/var/www/html/sano/adios.txt
+bbdd.txt,MTBlNjAzMTJjY2UxMDY5MzlhMTkyOTE0Y2RlMzY2Njk6MTczNzc1MTEwMQ==,safe,0,0,0,61,2025-01-24,20:38:53,www-data,/var/www/html/sano/bbdd.txt
+YearOfTheFOX-CarolinaMoreno.pdf,Y2M0MWQ0OWI0ZGUzYzZmMmUwNDg3YzBjMmFjMTQwYmE6MTczNzc1MTEzNA==,safe,0,0,0,63,2025-01-24,20:39:42,www-data,/var/www/html/sano/YearOfTheFOX-CarolinaMoreno.pdf
+YEAR_OF_THE_FOX_JOSE_ANDRES_RODRIGUEZ.pdf,YzQ0MjFiOWFkMWNkMWI3NTMyYzRjYWYzMjljYzY3YjQ6MTczNzc1MTE4Mw==,safe,0,0,0,63,2025-01-24,20:40:31,www-data,/var/www/html/sano/YEAR_OF_THE_FOX_JOSE_ANDRES_RODRIGUEZ.pdf
+PROYECTOS-TRABAJOS-CarolinaMoreno.pdf,ZGVlNzE2ZDc2NTcxZDdkZjBlN2RkNTAxMWVlZDE4YzE6MTczNzc1MTIzMg==,safe,0,0,0,63,2025-01-24,20:41:20,www-data,/var/www/html/sano/PROYECTOS-TRABAJOS-CarolinaMoreno.pdf
+adios.txt,MWQ2ZTE3MzNiZDJmMDUzYzFmYjkzNDc1ZDY4OTUxZDk6MTczNzc1MTMwOA==,safe,0,0,0,59,2025-01-24,20:44:24,www-data,/var/www/html/sano/adios.txt
+hola.txt,NGFlOTkxM2Q3MGVhMmU4ZDQxNzJjMGFjMWFiYmI0NDE6MTczNzc1MTQ2NA==,safe,0,0,0,60,2025-01-24,20:45:11,www-data,/var/www/html/sano/hola.txt
+nosoyunvirus.txt,NDRkODg2MTJmZWE4YThmMzZkZTgyZTEyNzhhYmIwMmY6MTczNzc1MTI1NQ==,infected,66,0,0,2,2025-01-24,20:45:13,www-data,/var/www/html/infectado/nosoyunvirus.txt
+adios.txt,MWQ2ZTE3MzNiZDJmMDUzYzFmYjkzNDc1ZDY4OTUxZDk6MTczNzc1MTMwOA==,safe,0,0,0,59,2025-01-24,20:52:44,www-data,/var/www/html/sano/adios.txt
+hola.txt,NGFlOTkxM2Q3MGVhMmU4ZDQxNzJjMGFjMWFiYmI0NDE6MTczNzc1MTQ2NA==,safe,0,0,0,60,2025-01-24,20:52:46,www-data,/var/www/html/sano/hola.txt
+nosoyunvirus.txt,NDRkODg2MTJmZWE4YThmMzZkZTgyZTEyNzhhYmIwMmY6MTczNzc1MTI1NQ==,infected,66,0,0,2,2025-01-24,20:52:47,www-data,/var/www/html/infectado/nosoyunvirus.txt
+adios.txt,MWQ2ZTE3MzNiZDJmMDUzYzFmYjkzNDc1ZDY4OTUxZDk6MTczNzc1MTMwOA==,safe,0,0,0,59,2025-01-24,20:56:27,www-data,/var/www/html/sano/adios.txt
+hola.txt,NGFlOTkxM2Q3MGVhMmU4ZDQxNzJjMGFjMWFiYmI0NDE6MTczNzc1MTQ2NA==,safe,0,0,0,60,2025-01-24,20:56:28,www-data,/var/www/html/sano/hola.txt
+nosoyunvirus.txt,NDRkODg2MTJmZWE4YThmMzZkZTgyZTEyNzhhYmIwMmY6MTczNzc1MjE4OQ==,infected,65,0,0,3,2025-01-24,20:59:05,www-data,/var/www/html/infectado/nosoyunvirus.txt
+adios.txt,MWQ2ZTE3MzNiZDJmMDUzYzFmYjkzNDc1ZDY4OTUxZDk6MTczNzc1MjMxNA==,safe,0,0,0,61,2025-01-24,20:59:06,www-data,/var/www/html/sano/adios.txt
+hola.txt,NGFlOTkxM2Q3MGVhMmU4ZDQxNzJjMGFjMWFiYmI0NDE6MTczNzc1MTQ2NA==,safe,0,0,0,60,2025-01-24,20:59:08,www-data,/var/www/html/sano/hola.txt
+nosoyunvirus.txt,NDRkODg2MTJmZWE4YThmMzZkZTgyZTEyNzhhYmIwMmY6MTczNzc1MjE4OQ==,infected,65,0,0,3,2025-01-24,20:59:09,www-data,/var/www/html/infectado/nosoyunvirus.txt
+adios.txt,MWQ2ZTE3MzNiZDJmMDUzYzFmYjkzNDc1ZDY4OTUxZDk6MTczNzc1MjMxNA==,safe,0,0,0,61,2025-01-24,21:00:28,www-data,/var/www/html/sano/adios.txt
+hola.txt,NGFlOTkxM2Q3MGVhMmU4ZDQxNzJjMGFjMWFiYmI0NDE6MTczNzc1MjQyOA==,safe,0,0,0,61,2025-01-24,21:02:02,www-data,/var/www/html/sano/hola.txt
+nosoyunvirus.txt,NDRkODg2MTJmZWE4YThmMzZkZTgyZTEyNzhhYmIwMmY6MTczNzc1MjE4OQ==,infected,65,0,0,3,2025-01-24,21:02:03,www-data,/var/www/html/infectado/nosoyunvirus.txt
+adios.txt,MWQ2ZTE3MzNiZDJmMDUzYzFmYjkzNDc1ZDY4OTUxZDk6MTczNzc1MjMxNA==,safe,0,0,0,61,2025-01-24,21:02:12,www-data,/var/www/html/sano/adios.txt
+hola.txt,NGFlOTkxM2Q3MGVhMmU4ZDQxNzJjMGFjMWFiYmI0NDE6MTczNzc1MjQyOA==,safe,0,0,0,61,2025-01-24,21:02:13,www-data,/var/www/html/sano/hola.txt
+nosoyunvirus.txt,NDRkODg2MTJmZWE4YThmMzZkZTgyZTEyNzhhYmIwMmY6MTczNzc1MjE4OQ==,infected,65,0,0,3,2025-01-24,21:02:15,www-data,/var/www/html/infectado/nosoyunvirus.txt
+adios.txt,MWQ2ZTE3MzNiZDJmMDUzYzFmYjkzNDc1ZDY4OTUxZDk6MTczNzc1MjMxNA==,safe,0,0,0,61,2025-01-24,21:07:16,www-data,/var/www/html/sano/adios.txt
+hola.txt,NGFlOTkxM2Q3MGVhMmU4ZDQxNzJjMGFjMWFiYmI0NDE6MTczNzc1MjQyOA==,safe,0,0,0,61,2025-01-24,21:07:18,www-data,/var/www/html/sano/hola.txt
+nosoyunvirus.txt,NDRkODg2MTJmZWE4YThmMzZkZTgyZTEyNzhhYmIwMmY6MTczNzc1MjE4OQ==,infected,65,0,0,3,2025-01-24,21:07:19,www-data,/var/www/html/infectado/nosoyunvirus.txt
+adios.txt,MWQ2ZTE3MzNiZDJmMDUzYzFmYjkzNDc1ZDY4OTUxZDk6MTczNzc1MjMxNA==,safe,0,0,0,61,2025-01-24,21:07:37,www-data,/var/www/html/sano/adios.txt
+hola.txt,NGFlOTkxM2Q3MGVhMmU4ZDQxNzJjMGFjMWFiYmI0NDE6MTczNzc1MjQyOA==,safe,0,0,0,61,2025-01-24,21:07:38,www-data,/var/www/html/sano/hola.txt
+nosoyunvirus.txt,NDRkODg2MTJmZWE4YThmMzZkZTgyZTEyNzhhYmIwMmY6MTczNzc1MjE4OQ==,infected,65,0,0,3,2025-01-24,21:07:39,www-data,/var/www/html/infectado/nosoyunvirus.txt
+adios.txt,MWQ2ZTE3MzNiZDJmMDUzYzFmYjkzNDc1ZDY4OTUxZDk6MTczNzc1MjMxNA==,safe,0,0,0,61,2025-01-24,21:10:04,www-data,/var/www/html/sano/adios.txt
+hola.txt,NGFlOTkxM2Q3MGVhMmU4ZDQxNzJjMGFjMWFiYmI0NDE6MTczNzc1MjQyOA==,safe,0,0,0,61,2025-01-24,21:10:06,www-data,/var/www/html/sano/hola.txt
+nosoyunvirus.txt,NDRkODg2MTJmZWE4YThmMzZkZTgyZTEyNzhhYmIwMmY6MTczNzc1MjE4OQ==,infected,65,0,0,3,2025-01-24,21:10:07,www-data,/var/www/html/infectado/nosoyunvirus.txt
+adios.txt,MWQ2ZTE3MzNiZDJmMDUzYzFmYjkzNDc1ZDY4OTUxZDk6MTczNzc1MjMxNA==,safe,0,0,0,61,2025-01-24,21:12:22,www-data,/var/www/html/sano/adios.txt
+hola.txt,NGFlOTkxM2Q3MGVhMmU4ZDQxNzJjMGFjMWFiYmI0NDE6MTczNzc1MjQyOA==,safe,0,0,0,61,2025-01-24,21:12:24,www-data,/var/www/html/sano/hola.txt
+nosoyunvirus.txt,NDRkODg2MTJmZWE4YThmMzZkZTgyZTEyNzhhYmIwMmY6MTczNzc1MzE0NQ==,infected,66,0,0,2,2025-01-24,21:13:12,www-data,/var/www/html/infectado/nosoyunvirus.txt

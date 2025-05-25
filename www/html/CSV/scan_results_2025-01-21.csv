@@ -1,0 +1,4 @@
+filename,file_id,status,malicious,harmless,suspicious,undetected,date,time,user,final_path
+virus.txt,Njk2MzBlNDU3NGVjNjc5ODIzOWIwOTFjZGE0M2RjYTA6MTczNzQ4NDYyMg==,infected,60,0,0,7,2025-01-21,18:37:34,momo,/var/www/html/infectado/virus.txt
+documento.doc,YzQ0OTI2NzYwODk4NzM0NDM0ZmVhM2E5YzNiZDA0YTY6MTczNzQ4NDY1NA==,safe,0,0,0,61,2025-01-21,18:38:06,momo,/var/www/html/sano/documento.doc
+importar.txt,MzI3YWYwYzgyNTUzOTU5YmQ5OTUxNzgwYzc4ODc1OGY6MTczNzQ4NTc2OA==,safe,0,0,0,61,2025-01-21,18:56:55,momo,/var/www/html/sano/importar.txt
