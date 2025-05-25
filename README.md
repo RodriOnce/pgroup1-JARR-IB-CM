@@ -1,59 +1,59 @@
 # **pgroup1-JARR-IB-CM**
 
-## **Operating System (OS)**
+## **Sistema Operativo (SO)**
 
-We used **Ubuntu Server 22.04 (Jellyfish)**.
-
----
-
-## **How to Get the API Key (via VirusTotal)**
-
-1. Go to the VirusTotal homepage and log in to your account.
-2. Access the **API Key** section.
-3. In your profile, your API key should appear (hidden).
+Hemos usado **Ubuntu Server 22.04 (Jellyfish)**.
 
 ---
 
-## **MariaDB Installation and Configuration**
+## **Cómo obtener la clave API (via VirusTotal)**
 
-1. Install MariaDB server and client:
+1. Vaya a la página de inicio de VirusTotal e inicie sesión en su cuenta.
+2. Accede a la sección **API Key**.
+3. En tu perfil, debería aparecer tu clave API (oculta).
+
+---
+
+## **Instalación y Configuración de MariaDB**
+
+1. Instalar servidor y cliente MariaDB:
    ```bash
    sudo apt install mariadb-server
    sudo apt install mariadb-client
    ```
-2. Start the MariaDB service:
+2. Inicie el servicio MariaDB:
    ```bash
    sudo systemctl start mariadb
    sudo systemctl enable mariadb
    ```
-3. Secure the installation:
+3. Asegure la instalación:
    ```bash
    sudo mysql_secure_installation
    ```
-4. Access MariaDB:
+4. Accede a MariaDB:
    ```bash
    sudo mysql -u root -p
    ```
-5. Create a database:
+5. Crea la Base de Datos:
    ```sql
    CREATE DATABASE name_db;
    USE name_db;
    ```
-6. Select the Database (Use the following command to select the 'empresa' database).
+6. Seleccione la base de datos (utilice el siguiente comando para seleccionar la base de datos 'empresa').
    ```sql
    USE empresa;
    ```
    ```
    USE viruses;
    ```
-7. Check the Table Structure (to verify the structure of the 'empleados' table):
+7. Comprobar la estructura de la tabla (para verificar la estructura de la tabla 'empleados'):
    ```sql
    DESCRIBE empleados;
    ```
    ```
    DESCRIBE archivos;
    ```
-8. Insert Data into the Table
+8. Insertar datos en la tabla
    ```sql
       # Tabla `empleados`
    CREATE TABLE empleados (
@@ -105,44 +105,44 @@ We used **Ubuntu Server 22.04 (Jellyfish)**.
    ('malware.exe', 'b7e6a1c9d2f8...', '2025-03-08', 'scanner02', 'infected'),
    ('report.docx', 'c9f8e7d6a5b4...', '2025-03-08', 'scanner03', 'clean');
    ```
-10. Verify the Insrted Data
+10. Verificar los datos introducidos
     ```sql
     SELECT * FROM empleados;
     ```
     ```
     SELECT * FROM archivos;
     ```
-11. Updating an Employee Record
+11. Actualizar un registro de empleado
     ```sql
     UPDATE empleados SET status = 'activo' WHERE user = 'bobm';
     ```
     ```
     UPDATE archivos SET scan_state = 'quarantined' WHERE filename = `malware.exe`
     ```
-12. Deleting an Employee Record
+12. Borrar un registro de empleado
     ```sql
     DELETE FROM empleados WHERE user = 'charlie01';
     ```
     ```
     DELETE FROM archivos WHERE filename = 'report.docx'
     ```
-13. Exiting MariaDB
+13. Salir de MariaDB
     ```sql
     EXIT;
     ```
-## **MongoDB Installation and Configuration with Docker**
+## **Instalación y configuración de MongoDB con Docker**
 
-For MongoDB installation using Docker, refer to the document `Docker_Mongo.pdf` located in the main folder.
+Para la instalación de MongoDB utilizando Docker, consulte el documento `Docker_Mongo.pdf` ubicado en la carpeta principal.
 
 ---
 
-## **Install Python and Pip**
+## **Instala Python y Pip**
 
-1. Install Python, Pip, and the Python virtual environment:
+1. Instalar Python, Pip y el entorno virtual de Python:
    ```bash
    sudo apt install python3 python3-pip python3-venv
    ```
-2. Check installed versions:
+2. Comprobar las versiones instaladas:
    ```bash
    python3 --version
    pip --version
@@ -150,47 +150,47 @@ For MongoDB installation using Docker, refer to the document `Docker_Mongo.pdf` 
 
 ---
 
-## **Install Apache**
+## **Instala Apache**
 
-1. Install Apache web server:
+1. Instalar el servidor web Apache:
    ```bash
    sudo apt install apache2
    ```
-2. Start and enable Apache:
+2. Iniciar y activar Apache:
    ```bash
    sudo systemctl start apache2
    sudo systemctl enable apache2
    ```
-3. **Root Directory:**
-   - All files and folders are located in: `/var/www/html`
+3. **Directorio raíz:**
+   - Todos los archivos y carpetas se encuentran en: `/var/www/html`
 
 ---
 
-## **Install PHP**
+## **Instala PHP**
 
-1. Install PHP and necessary modules:
+1. Instalar PHP y los módulos necesarios:
    ```bash
    sudo apt install php libapache2-mod-php php-mysql
    ```
-2. Verify the PHP installation:
+2. Verificar la instalación de PHP:
    ```bash
    php --version
    ```
 
 ---
 
-## **Permissions and Owners**
+## **Permisos y propietarios**
 
-All files and folders are located in the `/var/www/html/` directory. Below is an example image showing the permissions and ownership setup:
+Todos los archivos y carpetas se encuentran en el directorio `/var/www/html/`. A continuación se muestra una imagen de ejemplo que muestra la configuración de permisos y propiedad:
 
 ![imagen](https://github.com/user-attachments/assets/ab9a96ae-97af-4f7b-9b5f-4b13292353d5)
 
 
 ---
 
-## **Notes**
+## **Notas**
 
-- This document will continue to be updated and expanded with additional content and instructions.
+- Este documento seguirá actualizándose y ampliándose con contenidos e instrucciones adicionales.
 
 
 
