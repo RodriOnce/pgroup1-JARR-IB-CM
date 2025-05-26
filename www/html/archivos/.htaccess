@@ -1,0 +1,20 @@
+############################################################
+#  PROTECCIÓN DE LA CARPETA /archivos/
+############################################################
+
+# 1 · Impedir que Apache muestre un índice de ficheros
+Options -Indexes
+
+# 2 · ( OPCIONAL ) Bloquear la descarga directa de ciertos tipos
+#     Si prefieres servirlos siempre vía un script PHP que verifique la sesión,
+#     descomenta este bloque:
+#
+#<FilesMatch "\.(?:pdf|docx|xlsx|jpg|png|zip)$">
+#    Require all denied
+#</FilesMatch>
+#
+#  ── Cómo funciona ──
+#  · Si lo dejas comentado ⇒ los ficheros seguirán siendo accesibles por URL.
+#  · Si lo activas       ⇒ las URL directas devolverán 403 y sólo tu script podrá
+#                           leer el archivo (con fopen()/readfile()) y enviarlo
+#                           tras comprobar que el usuario está autenticado.
