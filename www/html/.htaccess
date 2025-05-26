@@ -1,0 +1,27 @@
+############################################################
+#  DIRECTIVAS GENERALES PARA TODO EL SITIO
+############################################################
+
+# 1 · Desactiva el listado de directorios en toda la web
+Options -Indexes
+
+# 2 · Cabeceras de seguridad básicas + CSP ajustada
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "DENY"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "no-referrer"
+
+    #  ▸  CSP: permite CSS y JS inline para tu HTML actual
+    Header always set Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; img-src 'self' data: https:; frame-ancestors 'none'; frame-src 'self' https://cybermap.kaspersky.com;"
+</IfModule>
+
+# 3 · Evita que login.html quede cacheado en el navegador
+<IfModule mod_headers.c>
+    <Files "login.html">
+        Header set Cache-Control "no-store"
+    </Files>
+</IfModule>
+# 4 · Redirección a HTTPS (descomenta cuando tengas certificado)
+#RewriteEngine On
+#RewriteCond %{HTTPS} off
+#RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
